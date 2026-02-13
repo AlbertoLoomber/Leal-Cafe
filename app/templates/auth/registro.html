@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Leal Café</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <!-- Sección del Formulario -->
+        <div class="auth-form-section">
+            <div class="auth-form-wrapper">
+                <!-- Logo y título -->
+                <div class="auth-logo">
+                    <i class="fas fa-mug-hot" style="font-size: 64px; color: var(--primary-color);"></i>
+                    <h1>Leal Café</h1>
+                    <p>Crear cuenta nueva</p>
+                </div>
+
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Formulario -->
+                <form method="POST" action="{{ url_for('auth.registro') }}" class="auth-form" id="registroForm">
+                    <h2>Registro de Usuario</h2>
+
+                    <!-- Grid de 2 columnas para nombre/apellido -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <!-- Nombre -->
+                        <div class="form-group">
+                            <label for="nombre" class="required">Nombre</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input
+                                    type="text"
+                                    id="nombre"
+                                    name="nombre"
+                                    class="form-control"
+                                    placeholder="Juan"
+                                    required
+                                    autofocus
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Apellido -->
+                        <div class="form-group">
+                            <label for="apellido" class="required">Apellido</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input
+                                    type="text"
+                                    id="apellido"
+                                    name="apellido"
+                                    class="form-control"
+                                    placeholder="Pérez"
+                                    required
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email" class="required">Correo Electrónico</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-control"
+                                placeholder="tu@email.com"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="form-group">
+                        <label for="password" class="required">Contraseña</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Mínimo 6 caracteres"
+                                required
+                                minlength="6"
+                                oninput="checkPasswordStrength()"
+                            >
+                        </div>
+                        <!-- Password Strength -->
+                        <div class="password-strength" id="passwordStrength" style="display: none;">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText"></div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmar Contraseña -->
+                    <div class="form-group">
+                        <label for="confirm_password" class="required">Confirmar Contraseña</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                class="form-control"
+                                placeholder="Repite tu contraseña"
+                                required
+                                minlength="6"
+                                oninput="checkPasswordMatch()"
+                            >
+                        </div>
+                        <div class="form-error" id="passwordMatchError" style="display: none;">
+                            Las contraseñas no coinciden
+                        </div>
+                    </div>
+
+                    <!-- Rol -->
+                    <div class="form-group">
+                        <label for="rol">Rol</label>
+                        <select id="rol" name="rol" class="form-control">
+                            <option value="usuario">Usuario</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+
+                    <!-- Términos y condiciones -->
+                    <div class="form-check" style="margin-bottom: 24px;">
+                        <input type="checkbox" id="terminos" required>
+                        <label for="terminos">
+                            Acepto los <a href="#" style="color: var(--primary-color);">términos y condiciones</a>
+                        </label>
+                    </div>
+
+                    <!-- Botón Submit -->
+                    <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Crear Cuenta
+                    </button>
+
+                    <!-- Footer -->
+                    <div class="auth-footer">
+                        ¿Ya tienes una cuenta?
+                        <a href="{{ url_for('auth.login') }}">Inicia sesión aquí</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sección de Marca (Derecha) -->
+        <div class="auth-brand-section">
+            <div class="auth-brand-content">
+                <i class="fas fa-users"></i>
+                <h2>Únete a Leal Café</h2>
+                <p>
+                    Crea tu cuenta y comienza a gestionar tu negocio de manera profesional.
+                    Acceso completo a todas las funcionalidades.
+                </p>
+
+                <!-- Features -->
+                <div class="auth-features">
+                    <div class="auth-feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <h4>Seguridad Garantizada</h4>
+                            <p>Tus datos están protegidos con encriptación</p>
+                        </div>
+                    </div>
+
+                    <div class="auth-feature-item">
+                        <i class="fas fa-cloud"></i>
+                        <div>
+                            <h4>Acceso desde Cualquier Lugar</h4>
+                            <p>Usa el sistema desde cualquier dispositivo</p>
+                        </div>
+                    </div>
+
+                    <div class="auth-feature-item">
+                        <i class="fas fa-headset"></i>
+                        <div>
+                            <h4>Soporte Dedicado</h4>
+                            <p>Ayuda cuando la necesites</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar fortaleza de contraseña
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthContainer = document.getElementById('passwordStrength');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+
+            if (password.length === 0) {
+                strengthContainer.style.display = 'none';
+                return;
+            }
+
+            strengthContainer.style.display = 'block';
+
+            let strength = 0;
+            if (password.length >= 6) strength++;
+            if (password.length >= 10) strength++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+            if (/\d/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            strengthFill.className = 'strength-fill';
+
+            if (strength <= 2) {
+                strengthFill.classList.add('weak');
+                strengthText.textContent = 'Contraseña débil';
+                strengthText.style.color = 'var(--danger-color)';
+            } else if (strength <= 3) {
+                strengthFill.classList.add('medium');
+                strengthText.textContent = 'Contraseña media';
+                strengthText.style.color = 'var(--warning-color)';
+            } else {
+                strengthFill.classList.add('strong');
+                strengthText.textContent = 'Contraseña fuerte';
+                strengthText.style.color = 'var(--success-color)';
+            }
+
+            checkPasswordMatch();
+        }
+
+        // Verificar que las contraseñas coincidan
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const errorDiv = document.getElementById('passwordMatchError');
+            const submitBtn = document.getElementById('submitBtn');
+            const confirmInput = document.getElementById('confirm_password');
+
+            if (confirmPassword.length === 0) {
+                errorDiv.style.display = 'none';
+                confirmInput.classList.remove('is-invalid', 'is-valid');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.style.display = 'block';
+                confirmInput.classList.add('is-invalid');
+                confirmInput.classList.remove('is-valid');
+                submitBtn.disabled = true;
+            } else {
+                errorDiv.style.display = 'none';
+                confirmInput.classList.remove('is-invalid');
+                confirmInput.classList.add('is-valid');
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Validación del formulario
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Las contraseñas no coinciden');
+                return false;
+            }
+
+            if (password.length < 6) {
+                e.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

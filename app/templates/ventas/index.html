@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Ventas - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('dashboard') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Module Header -->
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-shopping-cart"></i>
+    </div>
+    <div class="module-info">
+        <h1>Gestión de Ventas</h1>
+        <p>Visualiza y administra todas las ventas registradas</p>
+    </div>
+</div>
+
+<!-- Filtros y Acciones -->
+<div class="section-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="margin: 0;">Listado de Ventas</h3>
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ url_for('ventas.cargar') }}" class="btn btn-primary">
+                <i class="fas fa-file-upload"></i>
+                Cargar Ventas
+            </a>
+            <button onclick="exportarVentas()" class="btn btn-success">
+                <i class="fas fa-file-excel"></i>
+                Exportar a Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="form-group">
+            <label for="filtroFechaInicio">Fecha Inicio</label>
+            <input type="date" id="filtroFechaInicio" class="form-control" onchange="filtrarVentas()">
+        </div>
+        <div class="form-group">
+            <label for="filtroFechaFin">Fecha Fin</label>
+            <input type="date" id="filtroFechaFin" class="form-control" onchange="filtrarVentas()">
+        </div>
+        <div class="form-group">
+            <label for="filtroBuscar">Buscar Producto</label>
+            <input type="text" id="filtroBuscar" class="form-control" placeholder="Nombre del producto..." oninput="buscarEnTabla()">
+        </div>
+        <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button onclick="limpiarFiltros()" class="btn btn-outline btn-block">
+                <i class="fas fa-redo"></i>
+                Limpiar Filtros
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Ventas -->
+<div class="section-box">
+    <div class="table-wrapper">
+        <table class="data-table table-striped" id="tablaVentas">
+            <thead>
+                <tr>
+                    <th onclick="sortTable('tablaVentas', 0)" style="cursor: pointer;">
+                        ID <i class="fas fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable('tablaVentas', 1)" style="cursor: pointer;">
+                        Fecha <i class="fas fa-sort"></i>
+                    </th>
+                    <th onclick="sortTable('tablaVentas', 2)" style="cursor: pointer;">
+                        Producto <i class="fas fa-sort"></i>
+                    </th>
+                    <th style="text-align: right;">Cantidad</th>
+                    <th style="text-align: right;">Precio Unit.</th>
+                    <th style="text-align: right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if ventas %}
+                    {% for venta in ventas %}
+                    <tr>
+                        <td>{{ venta.id }}</td>
+                        <td>{{ venta.fecha.strftime('%d/%m/%Y') if venta.fecha else '-' }}</td>
+                        <td>{{ venta.producto }}</td>
+                        <td style="text-align: right;">{{ "%.2f"|format(venta.cantidad) }}</td>
+                        <td style="text-align: right;">${{ "%.2f"|format(venta.precio_unitario) }}</td>
+                        <td style="text-align: right;"><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.5;"></i>
+                            No hay ventas registradas.
+                            <a href="{{ url_for('ventas.cargar') }}">Cargar ventas ahora</a>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+            <tfoot>
+                <tr style="background: var(--gray-100); font-weight: bold;">
+                    <td colspan="3" style="text-align: right; padding: 16px;">TOTAL:</td>
+                    <td style="text-align: right;" id="totalCantidad">0.00</td>
+                    <td></td>
+                    <td style="text-align: right;" id="totalVentas">$0.00</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- ExcelJS -->
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+
+<script>
+    // Calcular totales
+    function calcularTotales() {
+        const tabla = document.getElementById('tablaVentas');
+        const filas = tabla.querySelectorAll('tbody tr:not([style*="display: none"])');
+
+        let totalCantidad = 0;
+        let totalVentas = 0;
+
+        filas.forEach(fila => {
+            const celdas = fila.cells;
+            if (celdas.length >= 6) {
+                const cantidad = parseFloat(celdas[3].textContent) || 0;
+                const total = parseCurrency(celdas[5].textContent) || 0;
+
+                totalCantidad += cantidad;
+                totalVentas += total;
+            }
+        });
+
+        document.getElementById('totalCantidad').textContent = formatNumber(totalCantidad);
+        document.getElementById('totalVentas').textContent = formatCurrency(totalVentas);
+    }
+
+    // Filtrar ventas por fechas
+    async function filtrarVentas() {
+        const fechaInicio = document.getElementById('filtroFechaInicio').value;
+        const fechaFin = document.getElementById('filtroFechaFin').value;
+
+        if (!fechaInicio && !fechaFin) {
+            return;
+        }
+
+        showLoading('Filtrando ventas...');
+
+        const params = new URLSearchParams();
+        if (fechaInicio) params.append('fecha_inicio', fechaInicio);
+        if (fechaFin) params.append('fecha_fin', fechaFin);
+        params.append('limit', 1000);
+
+        const result = await fetchAPI(`/ventas/api/ventas?${params.toString()}`);
+
+        hideLoading();
+
+        if (result.success) {
+            actualizarTabla(result.data);
+            showToast('Filtros aplicados exitosamente', 'success');
+        } else {
+            showAlert('Error al filtrar ventas: ' + result.error, 'danger');
+        }
+    }
+
+    // Actualizar tabla con nuevos datos
+    function actualizarTabla(ventas) {
+        const tbody = document.querySelector('#tablaVentas tbody');
+
+        if (ventas.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
+                        No se encontraron ventas con los filtros seleccionados
+                    </td>
+                </tr>
+            `;
+            calcularTotales();
+            return;
+        }
+
+        tbody.innerHTML = ventas.map(venta => {
+            const fecha = new Date(venta.fecha);
+            const fechaStr = fecha.toLocaleDateString('es-MX');
+
+            return `
+                <tr>
+                    <td>${venta.id}</td>
+                    <td>${fechaStr}</td>
+                    <td>${venta.producto}</td>
+                    <td style="text-align: right;">${formatNumber(venta.cantidad)}</td>
+                    <td style="text-align: right;">${formatCurrency(venta.precio_unitario)}</td>
+                    <td style="text-align: right;"><strong>${formatCurrency(venta.total)}</strong></td>
+                </tr>
+            `;
+        }).join('');
+
+        calcularTotales();
+    }
+
+    // Buscar en tabla
+    function buscarEnTabla() {
+        const termino = document.getElementById('filtroBuscar').value;
+        filterTable('tablaVentas', termino);
+        calcularTotales();
+    }
+
+    // Limpiar filtros
+    function limpiarFiltros() {
+        document.getElementById('filtroFechaInicio').value = '';
+        document.getElementById('filtroFechaFin').value = '';
+        document.getElementById('filtroBuscar').value = '';
+        location.reload();
+    }
+
+    // Exportar a Excel
+    async function exportarVentas() {
+        await exportTableToExcel('tablaVentas', 'ventas_leal_cafe');
+    }
+
+    // Calcular totales al cargar
+    document.addEventListener('DOMContentLoaded', calcularTotales);
+</script>
+{% endblock %}

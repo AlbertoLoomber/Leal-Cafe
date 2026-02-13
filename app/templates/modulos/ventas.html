@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Módulo Ventas - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('dashboard') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header del Módulo -->
+<div class="module-page-header">
+    <div class="module-page-icon" style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);">
+        <i class="fas fa-chart-line"></i>
+    </div>
+    <div class="module-page-info">
+        <h1>Ventas</h1>
+        <p>Análisis de ventas, reportes y catálogo de productos</p>
+    </div>
+</div>
+
+<!-- Título de Submódulos -->
+<div class="submodules-title">
+    <i class="fas fa-th-large"></i>
+    <span>Submódulos de Ventas</span>
+</div>
+
+<!-- Grid de Submódulos -->
+<div class="submodules-grid">
+    <!-- Dashboard de Ventas -->
+    <div class="submodule-card">
+        <div class="submodule-header">
+            <div class="submodule-icon" style="background: linear-gradient(135deg, #8B6F47 0%, #6F5936 100%);">
+                <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="submodule-info">
+                <h3>Dashboard de Ventas</h3>
+                <span class="submodule-code">Código: DASHBOARD_VENTAS</span>
+            </div>
+        </div>
+        <p class="submodule-description">Visualiza KPIs, tendencias y resumen general de las ventas</p>
+        <span class="submodule-number">#1</span>
+        <a href="{{ url_for('reportes.index') }}" class="submodule-btn">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Catálogo de Recetas -->
+    <div class="submodule-card">
+        <div class="submodule-header">
+            <div class="submodule-icon" style="background: linear-gradient(135deg, #A1887F 0%, #8B7355 100%);">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="submodule-info">
+                <h3>Catálogo de Recetas</h3>
+                <span class="submodule-code">Código: CATALOGO_RECETAS</span>
+            </div>
+        </div>
+        <p class="submodule-description">Listado de productos con ingredientes, costos y rendimientos</p>
+        <span class="submodule-number">#2</span>
+        <a href="{{ url_for('reportes.catalogo_recetas') }}" class="submodule-btn">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Metas Mensuales -->
+    <div class="submodule-card">
+        <div class="submodule-header">
+            <div class="submodule-icon" style="background: linear-gradient(135deg, #8B6914 0%, #6F5936 100%);">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="submodule-info">
+                <h3>Metas Mensuales</h3>
+                <span class="submodule-code">Código: METAS_MENSUALES</span>
+            </div>
+        </div>
+        <p class="submodule-description">Establece y da seguimiento a las metas de ventas por sucursal</p>
+        <span class="submodule-number">#3</span>
+        <a href="{{ url_for('ventas.metas') }}" class="submodule-btn">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Ocultar perfil y logout en módulos, mantener botón de regreso */
+.user-profile {
+    display: none;
+}
+
+.header-right {
+    display: none;
+}
+
+.main-container {
+    padding-top: 24px;
+}
+
+/* Header del Módulo */
+.module-page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 32px;
+}
+
+.module-page-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.module-page-icon i {
+    font-size: 32px;
+    color: white;
+}
+
+.module-page-info h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.module-page-info p {
+    margin: 6px 0 0 0;
+    font-size: 15px;
+    color: #718096;
+}
+
+/* Título de Submódulos */
+.submodules-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.submodules-title i {
+    color: #718096;
+    font-size: 16px;
+}
+
+.submodules-title span {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* Grid de Submódulos */
+.submodules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+}
+
+/* Card de Submódulo */
+.submodule-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.submodule-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    border-color: #cbd5e0;
+}
+
+.submodule-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.submodule-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.submodule-icon i {
+    font-size: 26px;
+    color: white;
+}
+
+.submodule-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.submodule-code {
+    font-size: 11px;
+    color: #a0aec0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.submodule-description {
+    color: #718096;
+    font-size: 14px;
+    margin: 0 0 auto 0;
+    line-height: 1.6;
+    flex-grow: 1;
+    padding-bottom: 20px;
+}
+
+.submodule-number {
+    background: #f7fafc;
+    color: #a0aec0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+.submodule-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+}
+
+.submodule-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+}
+
+.submodule-btn i {
+    transition: transform 0.2s ease;
+}
+
+.submodule-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .module-page-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .module-page-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .module-page-icon i {
+        font-size: 26px;
+    }
+
+    .module-page-info h1 {
+        font-size: 22px;
+    }
+
+    .submodules-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

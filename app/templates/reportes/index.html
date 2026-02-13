@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Ventas - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_ventas') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-chart-line"></i>
+    </div>
+    <div class="module-info">
+        <h1>Dashboard de Ventas</h1>
+        <p>Análisis financiero y rendimiento del negocio</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-section" style="background: white; padding: 24px; border-radius: 12px; margin-bottom: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    <h3 style="margin: 0 0 16px 0; font-size: 18px; color: var(--gray-700); display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-filter"></i>
+        Filtros
+    </h3>
+    <form method="GET" action="{{ url_for('reportes.index') }}" style="display: flex; gap: 16px; align-items: end; flex-wrap: wrap;">
+        <!-- Año -->
+        <div style="flex: 1; min-width: 150px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-700); font-size: 14px;">
+                <i class="fas fa-calendar"></i> Año
+            </label>
+            <select name="anio" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                <option value="2024" {% if anio_seleccionado == 2024 %}selected{% endif %}>2024</option>
+                <option value="2025" {% if anio_seleccionado == 2025 %}selected{% endif %}>2025</option>
+                <option value="2026" {% if anio_seleccionado == 2026 %}selected{% endif %}>2026</option>
+            </select>
+        </div>
+
+        <!-- Mes -->
+        <div style="flex: 1; min-width: 150px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-700); font-size: 14px;">
+                <i class="fas fa-calendar-alt"></i> Mes
+            </label>
+            <select name="mes" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                <option value="1" {% if mes_seleccionado == 1 %}selected{% endif %}>Enero</option>
+                <option value="2" {% if mes_seleccionado == 2 %}selected{% endif %}>Febrero</option>
+                <option value="3" {% if mes_seleccionado == 3 %}selected{% endif %}>Marzo</option>
+                <option value="4" {% if mes_seleccionado == 4 %}selected{% endif %}>Abril</option>
+                <option value="5" {% if mes_seleccionado == 5 %}selected{% endif %}>Mayo</option>
+                <option value="6" {% if mes_seleccionado == 6 %}selected{% endif %}>Junio</option>
+                <option value="7" {% if mes_seleccionado == 7 %}selected{% endif %}>Julio</option>
+                <option value="8" {% if mes_seleccionado == 8 %}selected{% endif %}>Agosto</option>
+                <option value="9" {% if mes_seleccionado == 9 %}selected{% endif %}>Septiembre</option>
+                <option value="10" {% if mes_seleccionado == 10 %}selected{% endif %}>Octubre</option>
+                <option value="11" {% if mes_seleccionado == 11 %}selected{% endif %}>Noviembre</option>
+                <option value="12" {% if mes_seleccionado == 12 %}selected{% endif %}>Diciembre</option>
+            </select>
+        </div>
+
+        <!-- Sucursal -->
+        <div style="flex: 1; min-width: 150px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--gray-700); font-size: 14px;">
+                <i class="fas fa-store"></i> Sucursal
+            </label>
+            <select name="sucursal" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                <option value="" {% if not sucursal_seleccionada %}selected{% endif %}>Todas</option>
+                <option value="Centro" {% if sucursal_seleccionada == 'Centro' %}selected{% endif %}>Centro</option>
+                <option value="LM" {% if sucursal_seleccionada == 'LM' %}selected{% endif %}>LM</option>
+                <option value="Auditorio" {% if sucursal_seleccionada == 'Auditorio' %}selected{% endif %}>Auditorio</option>
+                <option value="Ahumada" {% if sucursal_seleccionada == 'Ahumada' %}selected{% endif %}>Ahumada</option>
+            </select>
+        </div>
+
+        <!-- Botón Filtrar -->
+        <div>
+            <button type="submit" class="btn-primary" style="padding: 10px 24px; background: var(--primary-color); color: white; border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <i class="fas fa-search"></i>
+                Filtrar
+            </button>
+        </div>
+
+        <!-- Botón Limpiar -->
+        <div>
+            <a href="{{ url_for('reportes.index') }}" class="btn-secondary" style="padding: 10px 24px; background: var(--gray-200); color: var(--gray-700); border: none; border-radius: 8px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; text-decoration: none; font-size: 14px;">
+                <i class="fas fa-times"></i>
+                Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Métricas Generales del Negocio -->
+<div class="metrics-section">
+    <h2 class="section-subtitle">
+        <i class="fas fa-chart-bar"></i>
+        Métricas Generales del Negocio
+    </h2>
+
+    <div class="metrics-grid">
+        <!-- Ventas Totales -->
+        <div class="metric-card primary-card">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <span class="metric-label">Ventas Totales</span>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(general.ventas_totales) }}</div>
+        </div>
+
+        <!-- Costo de Venta -->
+        <div class="metric-card danger-card">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <span class="metric-label">Costo de Venta</span>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(general.costo_venta_total) }}</div>
+            <div class="metric-percentage">{{ "{:.1f}".format(general.porcentaje_costo) }}% de las ventas</div>
+        </div>
+
+        <!-- Ingreso Real -->
+        <div class="metric-card success-card">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <span class="metric-label">Ingreso Real</span>
+            </div>
+            <div class="metric-value">${{ "{:,.2f}".format(general.ingreso_real) }}</div>
+            <div class="metric-percentage">{{ "{:.1f}".format(general.porcentaje_ingreso) }}% de las ventas</div>
+        </div>
+
+        <!-- ROI -->
+        <div class="metric-card warning-card">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="metric-label">ROI (Retorno)</span>
+            </div>
+            <div class="metric-value">{{ "{:.1f}".format(general.roi) }}%</div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla por Sucursal -->
+<div class="table-section">
+    <h2 class="section-subtitle">
+        <i class="fas fa-store"></i>
+        Desglose por Sucursal
+    </h2>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Sucursal</th>
+                    <th>Ventas Totales</th>
+                    <th>Costo de Venta</th>
+                    <th>% Costo</th>
+                    <th>Ingreso Real</th>
+                    <th>% Ingreso</th>
+                    <th>ROI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sucursal in sucursales %}
+                <tr>
+                    <td class="sucursal-name">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ sucursal.sucursal }}
+                    </td>
+                    <td class="money">${{ "{:,.2f}".format(sucursal.ventas_totales) }}</td>
+                    <td class="money">${{ "{:,.2f}".format(sucursal.costo_venta_total) }}</td>
+                    <td class="percent">{{ "{:.1f}".format(sucursal.porcentaje_costo) }}%</td>
+                    <td class="money success">${{ "{:,.2f}".format(sucursal.ingreso_real) }}</td>
+                    <td class="percent">{{ "{:.1f}".format(sucursal.porcentaje_ingreso) }}%</td>
+                    <td class="percent roi">{{ "{:.1f}".format(sucursal.roi) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Tabla por Producto -->
+<div class="table-section">
+    <h2 class="section-subtitle">
+        <i class="fas fa-coffee"></i>
+        Desglose por Producto
+    </h2>
+
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Ventas Totales</th>
+                    <th>Costo de Venta</th>
+                    <th>% Costo</th>
+                    <th>Ingreso Real</th>
+                    <th>% Ingreso</th>
+                    <th>ROI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if productos %}
+                    {% for producto in productos %}
+                    <tr>
+                        <td class="producto-name">
+                            <i class="fas fa-box"></i>
+                            {{ producto.nombre_platillo }}
+                        </td>
+                        <td class="money">${{ "{:,.2f}".format(producto.ventas_totales) }}</td>
+                        <td class="money">${{ "{:,.2f}".format(producto.costo_venta_total) }}</td>
+                        <td class="percent">{{ "{:.1f}".format(producto.porcentaje_costo) }}%</td>
+                        <td class="money success">${{ "{:,.2f}".format(producto.ingreso_real) }}</td>
+                        <td class="percent">{{ "{:.1f}".format(producto.porcentaje_ingreso) }}%</td>
+                        <td class="percent roi">{{ "{:.1f}".format(producto.roi) }}%</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 32px; color: var(--gray-500);">
+                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
+                            No hay datos de productos disponibles
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Ocultar perfil y logout en submódulos, mantener botón de regreso */
+.user-profile {
+    display: none;
+}
+
+.header-right {
+    display: none;
+}
+
+.main-container {
+    padding-top: 24px;
+}
+
+/* Sección de Métricas */
+.metrics-section {
+    margin-bottom: 32px;
+}
+
+.section-subtitle {
+    font-size: 18px;
+    color: var(--secondary-color);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-subtitle i {
+    color: var(--primary-color);
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.metric-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.metric-card.primary-card {
+    border-color: #3b82f6;
+}
+
+.metric-card.danger-card {
+    border-color: #ef4444;
+}
+
+.metric-card.success-card {
+    border-color: #10b981;
+}
+
+.metric-card.warning-card {
+    border-color: #f59e0b;
+}
+
+.metric-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.primary-card .metric-icon {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.danger-card .metric-icon {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.success-card .metric-icon {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.warning-card .metric-icon {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.metric-label {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin-bottom: 4px;
+}
+
+.metric-percentage {
+    font-size: 13px;
+    color: var(--gray-500);
+}
+
+/* Sección de Tabla */
+.table-section {
+    margin-top: 32px;
+}
+
+.table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: linear-gradient(135deg, #8B6F47 0%, #6F5936 100%);
+}
+
+.data-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr {
+    border-bottom: 1px solid var(--gray-200);
+    transition: background-color 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.data-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.data-table td {
+    padding: 16px;
+    font-size: 14px;
+    color: var(--gray-700);
+}
+
+.data-table .sucursal-name,
+.data-table .producto-name {
+    font-weight: 600;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.data-table .sucursal-name i,
+.data-table .producto-name i {
+    color: var(--primary-color);
+}
+
+.data-table .money {
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.data-table .money.success {
+    color: #10b981;
+}
+
+.data-table .percent {
+    font-weight: 500;
+}
+
+.data-table .percent.roi {
+    color: #f59e0b;
+    font-weight: 700;
+}
+</style>
+{% endblock %}

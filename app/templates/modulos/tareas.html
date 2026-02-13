@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Registro de Tareas - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_operativo') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header del Submódulo -->
+<div class="submodule-page-header">
+    <div class="submodule-page-icon" style="background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);">
+        <i class="fas fa-tasks"></i>
+    </div>
+    <div class="submodule-page-info">
+        <h1>Registro de Tareas</h1>
+        <p>Gestiona y da seguimiento a las tareas operativas</p>
+    </div>
+</div>
+
+<!-- Mensaje de próximamente -->
+<div class="coming-soon-box">
+    <div class="coming-soon-icon">
+        <i class="fas fa-tools"></i>
+    </div>
+    <h2>Módulo en Construcción</h2>
+    <p>Estamos trabajando en este módulo para que puedas gestionar y dar seguimiento a las tareas operativas de tu negocio.</p>
+
+    <div class="features-preview">
+        <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Crear tareas</span>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Asignar responsables</span>
+        </div>
+        <div class="feature-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Seguimiento de avances</span>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Header del Submódulo */
+.submodule-page-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 32px;
+}
+
+.submodule-page-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.submodule-page-icon i {
+    font-size: 28px;
+    color: white;
+}
+
+.submodule-page-info h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.submodule-page-info p {
+    margin: 6px 0 0 0;
+    font-size: 14px;
+    color: #718096;
+}
+
+/* Coming Soon Box */
+.coming-soon-box {
+    background: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.coming-soon-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px;
+    background: #f7fafc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.coming-soon-icon i {
+    font-size: 48px;
+    color: #a0aec0;
+}
+
+.coming-soon-box h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 12px 0;
+}
+
+.coming-soon-box > p {
+    color: #718096;
+    font-size: 15px;
+    max-width: 500px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+}
+
+.features-preview {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7fafc;
+    padding: 14px 20px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+}
+
+.feature-item i {
+    color: #48bb78;
+    font-size: 16px;
+}
+
+.feature-item span {
+    color: #4a5568;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .submodule-page-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .coming-soon-box {
+        padding: 40px 20px;
+    }
+
+    .features-preview {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}

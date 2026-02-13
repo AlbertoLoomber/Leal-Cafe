@@ -1,0 +1,395 @@
+/**
+ * Login & Auth Pages - Leal Café
+ */
+
+body.auth-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-primary);
+    background: #F5F5F5;
+    padding: var(--space-2xl);
+}
+
+/* ============================
+   LAYOUT DE LOGIN
+============================ */
+
+.auth-container {
+    display: flex;
+    width: 100%;
+    max-width: 1100px;
+    min-height: auto;
+    gap: var(--space-2xl);
+}
+
+/* Lado izquierdo - Formulario */
+.auth-form-section {
+    flex: 0 0 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4xl) var(--space-3xl);
+    background: var(--white);
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+}
+
+.auth-logo i {
+    margin-bottom: var(--space-md);
+}
+
+.auth-logo h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+    margin: 0 0 var(--space-xs) 0;
+}
+
+.auth-logo p {
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+    margin: 0;
+}
+
+/* Formulario */
+.auth-form {
+    margin-top: var(--space-2xl);
+}
+
+.auth-form h2 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--secondary-color);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+}
+
+.auth-form .form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.auth-form .form-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
+}
+
+.auth-form .form-control {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-sm);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+}
+
+.auth-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(111, 78, 55, 0.1);
+}
+
+/* Input con icono */
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: var(--space-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    font-size: var(--font-size-lg);
+}
+
+.input-with-icon .form-control {
+    padding-left: var(--space-5xl);
+}
+
+/* Recordar / Olvidé contraseña */
+.auth-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    font-size: var(--font-size-xs);
+}
+
+.auth-options .form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.auth-options .form-check input {
+    width: 16px;
+    height: 16px;
+}
+
+.auth-options a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+}
+
+.auth-options a:hover {
+    text-decoration: underline;
+}
+
+/* Botón submit */
+.auth-form .btn-submit {
+    width: 100%;
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: var(--space-lg);
+}
+
+/* Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: var(--space-3xl) 0;
+    color: var(--gray-500);
+    font-size: var(--font-size-sm);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gray-300);
+}
+
+.auth-divider::before {
+    margin-right: var(--space-lg);
+}
+
+.auth-divider::after {
+    margin-left: var(--space-lg);
+}
+
+/* Footer de formulario */
+.auth-footer {
+    text-align: center;
+    margin-top: var(--space-xl);
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+}
+
+.auth-footer a {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ============================
+   LADO DERECHO - BRAND
+============================ */
+
+.auth-brand-section {
+    flex: 1;
+    background: linear-gradient(135deg, #A1887F 0%, #8B6F47 50%, #6F5936 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4xl);
+    position: relative;
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Patrón de fondo - Deshabilitado para fondo blanco */
+.auth-brand-section::before {
+    display: none;
+}
+
+.auth-brand-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: var(--white);
+    max-width: 450px;
+    width: 100%;
+}
+
+.auth-brand-content i {
+    font-size: 64px;
+    margin-bottom: var(--space-xl);
+    opacity: 0.95;
+}
+
+.auth-brand-content h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-md);
+    color: var(--white);
+}
+
+.auth-brand-content p {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+/* Features list */
+.auth-features {
+    margin-top: var(--space-2xl);
+    text-align: left;
+}
+
+.auth-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+    padding: var(--space-lg);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-feature-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.auth-feature-item i {
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-md);
+    flex-shrink: 0;
+}
+
+.auth-feature-item div h4 {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    margin: 0 0 2px 0;
+    color: var(--white);
+}
+
+.auth-feature-item div p {
+    font-size: var(--font-size-xs);
+    margin: 0;
+    opacity: 0.85;
+    line-height: 1.4;
+}
+
+/* ============================
+   STRENGTH METER (para registro)
+============================ */
+
+.password-strength {
+    margin-top: var(--space-sm);
+}
+
+.strength-bar {
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--space-xs);
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    transition: all var(--transition-base);
+    border-radius: var(--radius-full);
+}
+
+.strength-fill.weak {
+    width: 33%;
+    background: var(--danger-color);
+}
+
+.strength-fill.medium {
+    width: 66%;
+    background: var(--warning-color);
+}
+
+.strength-fill.strong {
+    width: 100%;
+    background: var(--success-color);
+}
+
+.strength-text {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+}
+
+/* ============================
+   RESPONSIVE
+============================ */
+
+@media (max-width: 1024px) {
+    .auth-brand-section {
+        display: none;
+    }
+
+    .auth-form-section {
+        flex: none;
+        width: 100%;
+    }
+
+    .auth-container {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    body.auth-page {
+        padding: var(--space-lg);
+    }
+
+    .auth-form-section {
+        padding: var(--space-3xl) var(--space-lg);
+    }
+
+    .auth-logo h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .auth-form h2 {
+        font-size: var(--font-size-xl);
+    }
+
+    .auth-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+
+    .auth-container {
+        border-radius: var(--radius-lg);
+    }
+}

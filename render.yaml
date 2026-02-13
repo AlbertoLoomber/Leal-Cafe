@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: leal-cafe
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: leal-cafe-db
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: leal-cafe-db
+          property: port
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: leal-cafe-db
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: leal-cafe-db
+          property: password
+      - key: POSTGRES_DATABASE
+        fromDatabase:
+          name: leal-cafe-db
+          property: database
+
+databases:
+  - name: leal-cafe-db
+    databaseName: lealdb
+    user: lealcafe

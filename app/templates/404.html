@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Página no encontrada{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px;">
+    <div style="font-size: 120px; color: #8B6914; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h1 style="font-size: 48px; color: #374151; margin-bottom: 16px;">404</h1>
+    <h2 style="font-size: 24px; color: #6b7280; margin-bottom: 32px;">Página no encontrada</h2>
+    <p style="font-size: 16px; color: #9ca3af; margin-bottom: 40px;">
+        La página que estás buscando no existe o ha sido movida.
+    </p>
+    <a href="{{ url_for('index') }}" style="display: inline-block; padding: 12px 24px; background: #8B6914; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+        <i class="fas fa-home"></i> Volver al Inicio
+    </a>
+</div>
+{% endblock %}

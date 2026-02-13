@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Reporte Productos - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_ventas') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-box"></i>
+    </div>
+    <div class="module-info">
+        <h1>Productos Más Vendidos</h1>
+        <p>Análisis de productos por volumen de ventas</p>
+    </div>
+</div>
+
+<div class="section-box">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="margin: 0;">Top 50 Productos</h3>
+        <button onclick="exportTableToExcel('tablaProductos', 'productos_mas_vendidos')" class="btn btn-success">
+            <i class="fas fa-file-excel"></i>
+            Exportar
+        </button>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table table-striped" id="tablaProductos">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th style="text-align: right;">Cantidad Total</th>
+                    <th style="text-align: right;">Transacciones</th>
+                    <th style="text-align: right;">Precio Prom.</th>
+                    <th style="text-align: right;">Total Ventas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if productos %}
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ producto.producto }}</strong></td>
+                        <td style="text-align: right;">{{ "%.2f"|format(producto.total_cantidad) }}</td>
+                        <td style="text-align: right;">{{ producto.num_transacciones }}</td>
+                        <td style="text-align: right;">${{ "%.2f"|format(producto.precio_promedio) }}</td>
+                        <td style="text-align: right;"><strong>${{ "%.2f"|format(producto.total_ventas) }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">No hay datos disponibles</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Ocultar perfil y logout en submódulos, mantener botón de regreso */
+.user-profile {
+    display: none;
+}
+
+.header-right {
+    display: none;
+}
+
+.main-container {
+    padding-top: 24px;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+{% endblock %}

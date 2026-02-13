@@ -1,0 +1,577 @@
+{% extends "base.html" %}
+
+{% block title %}Estado de Resultados - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_contabilidad') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Header del Módulo -->
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-file-invoice-dollar"></i>
+    </div>
+    <div class="module-info">
+        <h1>Estado de Resultados</h1>
+        <p>Análisis financiero y rentabilidad del negocio</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="filters-section">
+    <div class="filters-container">
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-calendar-alt"></i> Período
+            </label>
+            <select id="filtroMes" class="form-control" onchange="cambiarPeriodo()">
+                {% for m in range(1, 13) %}
+                <option value="{{ m }}" {% if m == mes %}selected{% endif %}>
+                    {{ meses_nombres[m] }} {{ anio }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="exportarPDF()">
+            <i class="fas fa-file-pdf"></i>
+            Exportar PDF
+        </button>
+    </div>
+</div>
+
+<!-- Tarjetas de KPIs -->
+<div class="kpis-grid">
+    <div class="kpi-card kpi-success">
+        <div class="kpi-icon">
+            <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <div class="kpi-content">
+            <span class="kpi-label">Ingresos Totales</span>
+            <span class="kpi-value">${{ "{:,.0f}".format(datos.ingresos) }}</span>
+        </div>
+    </div>
+
+    <div class="kpi-card kpi-primary">
+        <div class="kpi-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div class="kpi-content">
+            <span class="kpi-label">Utilidad Bruta</span>
+            <span class="kpi-value">${{ "{:,.0f}".format(datos.utilidad_bruta) }}</span>
+            <span class="kpi-sublabel">Margen: {{ "%.1f"|format(datos.margen_bruto) }}%</span>
+        </div>
+    </div>
+
+    <div class="kpi-card {% if datos.utilidad_neta >= 0 %}kpi-success{% else %}kpi-danger{% endif %}">
+        <div class="kpi-icon">
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+        <div class="kpi-content">
+            <span class="kpi-label">Utilidad Neta</span>
+            <span class="kpi-value">${{ "{:,.0f}".format(datos.utilidad_neta) }}</span>
+            <span class="kpi-sublabel">Margen: {{ "%.1f"|format(datos.margen_neto) }}%</span>
+        </div>
+    </div>
+
+    <div class="kpi-card kpi-danger">
+        <div class="kpi-icon">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <div class="kpi-content">
+            <span class="kpi-label">Gastos Operativos</span>
+            <span class="kpi-value">${{ "{:,.0f}".format(datos.gastos_fijos.total + datos.gastos_variables.total) }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Estado de Resultados -->
+<div class="estado-resultados-card">
+    <div class="card-header-er">
+        <h2><i class="fas fa-file-alt"></i> Estado de Resultados - {{ meses_nombres[mes] }} {{ anio }}</h2>
+    </div>
+
+    <div class="estado-resultados-body">
+        <!-- Ingresos -->
+        <div class="er-line er-header">
+            <span class="er-label">INGRESOS</span>
+            <span class="er-amount positive">${{ "{:,.2f}".format(datos.ingresos) }}</span>
+        </div>
+
+        <!-- Costo de Venta (Insumos) -->
+        <div class="er-line er-item">
+            <span class="er-label er-indent">- Costo de Venta (Insumos)</span>
+            <span class="er-amount negative">${{ "{:,.2f}".format(datos.costo_ventas) }}</span>
+        </div>
+
+        <div class="er-divider"></div>
+
+        <!-- Utilidad Bruta -->
+        <div class="er-line er-subtotal">
+            <span class="er-label er-bold">= UTILIDAD BRUTA</span>
+            <span class="er-amount er-bold {% if datos.utilidad_bruta >= 0 %}positive{% else %}negative{% endif %}">
+                ${{ "{:,.2f}".format(datos.utilidad_bruta) }}
+            </span>
+        </div>
+
+        <div class="er-spacer"></div>
+
+        <!-- Gastos Fijos -->
+        <div class="er-line er-expandable" onclick="toggleDesglose('fijos')">
+            <span class="er-label">
+                <i class="fas fa-chevron-down toggle-icon" id="icon-fijos"></i>
+                - GASTOS FIJOS
+            </span>
+            <span class="er-amount negative">${{ "{:,.2f}".format(datos.gastos_fijos.total) }}</span>
+        </div>
+
+        <div class="er-desglose" id="desglose-fijos">
+            {% for item in datos.gastos_fijos.desglose %}
+            <div class="er-line er-subitem">
+                <span class="er-label er-indent2">• {{ item.categoria }}</span>
+                <span class="er-amount">${{ "{:,.2f}".format(item.monto) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Gastos Variables (sin insumos) -->
+        <div class="er-line er-expandable" onclick="toggleDesglose('variables')">
+            <span class="er-label">
+                <i class="fas fa-chevron-down toggle-icon" id="icon-variables"></i>
+                - GASTOS VARIABLES
+            </span>
+            <span class="er-amount negative">${{ "{:,.2f}".format(datos.gastos_variables.total) }}</span>
+        </div>
+
+        <div class="er-desglose" id="desglose-variables">
+            {% for item in datos.gastos_variables.desglose %}
+            <div class="er-line er-subitem">
+                <span class="er-label er-indent2">• {{ item.categoria }}</span>
+                <span class="er-amount">${{ "{:,.2f}".format(item.monto) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="er-divider-final"></div>
+
+        <!-- Utilidad Neta -->
+        <div class="er-line er-total">
+            <span class="er-label er-bold">= UTILIDAD NETA</span>
+            <span class="er-amount er-bold {% if datos.utilidad_neta >= 0 %}positive{% else %}negative{% endif %}">
+                ${{ "{:,.2f}".format(datos.utilidad_neta) }}
+            </span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Variables */
+:root {
+    --primary-color: #8B6914;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-700: #374151;
+    --gray-900: #111827;
+}
+
+/* Filtros */
+.filters-section {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--gray-200);
+}
+
+.filters-container {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+}
+
+.filter-group {
+    flex: 1;
+    max-width: 300px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray-700);
+    font-size: 14px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.1);
+}
+
+/* KPIs Grid */
+.kpis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.kpi-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.kpi-success .kpi-icon {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+}
+
+.kpi-primary .kpi-icon {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: var(--primary-color);
+}
+
+.kpi-danger .kpi-icon {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+}
+
+.kpi-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kpi-label {
+    font-size: 13px;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-900);
+    line-height: 1;
+}
+
+.kpi-sublabel {
+    font-size: 12px;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+/* Estado de Resultados Card */
+.estado-resultados-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    margin-bottom: 32px;
+}
+
+.card-header-er {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #6d5310 100%);
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.card-header-er h2 {
+    margin: 0;
+    color: white;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.estado-resultados-body {
+    padding: 32px;
+}
+
+/* Líneas del Estado de Resultados */
+.er-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.er-line:hover {
+    background: var(--gray-50);
+}
+
+.er-label {
+    font-size: 15px;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+.er-amount {
+    font-size: 15px;
+    color: var(--gray-900);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+/* Estilos especiales */
+.er-header {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    margin-bottom: 8px;
+}
+
+.er-header .er-label {
+    font-size: 16px;
+    font-weight: 700;
+    color: #065f46;
+}
+
+.er-header .er-amount {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.er-subtotal {
+    background: var(--gray-100);
+    margin: 8px 0;
+}
+
+.er-total {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 16px 20px;
+    margin-top: 8px;
+}
+
+.er-total .er-label,
+.er-total .er-amount {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.er-bold {
+    font-weight: 700 !important;
+}
+
+.er-indent {
+    padding-left: 24px;
+}
+
+.er-indent2 {
+    padding-left: 48px;
+}
+
+.er-item {
+    background: transparent;
+}
+
+/* Colores de montos */
+.positive {
+    color: #059669 !important;
+}
+
+.negative {
+    color: #dc2626 !important;
+}
+
+/* Dividers */
+.er-divider {
+    height: 2px;
+    background: var(--gray-200);
+    margin: 16px 0;
+}
+
+.er-divider-final {
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color) 0%, #6d5310 100%);
+    margin: 16px 0;
+}
+
+.er-spacer {
+    height: 16px;
+}
+
+/* Desglose expandible */
+.er-expandable {
+    cursor: pointer;
+    background: var(--gray-50);
+    font-weight: 600;
+}
+
+.er-expandable:hover {
+    background: var(--gray-100);
+}
+
+.toggle-icon {
+    transition: transform 0.3s;
+    margin-right: 8px;
+    font-size: 12px;
+}
+
+.toggle-icon.rotated {
+    transform: rotate(-90deg);
+}
+
+.er-desglose {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.er-desglose.collapsed {
+    max-height: 0;
+}
+
+.er-subitem {
+    background: var(--gray-50);
+    margin: 2px 0;
+}
+
+.er-subitem .er-label {
+    color: var(--gray-700);
+    font-weight: 400;
+}
+
+.er-subitem .er-amount {
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+/* Botones */
+.btn-primary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #6d5310;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 105, 20, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kpis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-group {
+        max-width: 100%;
+    }
+
+    .estado-resultados-body {
+        padding: 16px;
+    }
+
+    .er-line {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .er-amount {
+        align-self: flex-end;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Toggle desglose de gastos
+function toggleDesglose(tipo) {
+    const desglose = document.getElementById(`desglose-${tipo}`);
+    const icon = document.getElementById(`icon-${tipo}`);
+
+    desglose.classList.toggle('collapsed');
+    icon.classList.toggle('rotated');
+}
+
+// Cambiar período
+function cambiarPeriodo() {
+    const mes = document.getElementById('filtroMes').value;
+    const anio = {{ anio }};
+    window.location.href = `/contabilidad/resumen?mes=${mes}&anio=${anio}`;
+}
+
+// Exportar a PDF (placeholder)
+function exportarPDF() {
+    alert('Función de exportar a PDF - Por implementar');
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Estado de Resultados cargado');
+
+    // Mostrar desgloses por defecto
+    document.getElementById('desglose-fijos').classList.remove('collapsed');
+    document.getElementById('desglose-variables').classList.remove('collapsed');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo de Recetas - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_ventas') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-book-open"></i>
+    </div>
+    <div class="module-info">
+        <h1>Catálogo de Recetas</h1>
+        <p>Listado de productos con ingredientes y costos</p>
+    </div>
+</div>
+
+<!-- Buscador -->
+<div class="section-box" style="margin-bottom: 24px;">
+    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 250px;">
+            <div style="position: relative;">
+                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-500);"></i>
+                <input
+                    type="text"
+                    id="buscarReceta"
+                    class="form-control"
+                    placeholder="Buscar por código o nombre de producto..."
+                    style="padding-left: 40px;"
+                    onkeyup="filtrarRecetas()"
+                >
+            </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="color: var(--gray-600); font-size: 14px;">
+                <strong id="contadorRecetas">{{ recetas|length }}</strong> recetas encontradas
+            </span>
+            <button onclick="exportTableToExcel('tablaRecetas', 'catalogo_recetas')" class="btn btn-success">
+                <i class="fas fa-file-excel"></i>
+                Exportar
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de Recetas -->
+<div class="section-box">
+    <div class="table-wrapper">
+        <table class="data-table table-striped" id="tablaRecetas">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">#</th>
+                    <th style="width: 180px;">Código</th>
+                    <th>Nombre del Producto</th>
+                    <th style="text-align: center; width: 120px;">Ingredientes</th>
+                    <th style="text-align: right; width: 140px;">Costo Total</th>
+                    <th style="text-align: center; width: 120px;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if recetas %}
+                    {% for receta in recetas %}
+                    <tr data-codigo="{{ receta.codigo_platillo }}" data-nombre="{{ receta.platillo }}">
+                        <td style="color: var(--gray-500);">{{ loop.index }}</td>
+                        <td>
+                            <code style="background: var(--gray-100); padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                {{ receta.codigo_platillo }}
+                            </code>
+                        </td>
+                        <td><strong>{{ receta.platillo }}</strong></td>
+                        <td style="text-align: center;">
+                            <span class="badge badge-info">{{ receta.num_ingredientes }}</span>
+                        </td>
+                        <td style="text-align: right;">
+                            <strong style="color: var(--primary-color); font-size: 16px;">
+                                ${{ "%.2f"|format(receta.costo_total) }}
+                            </strong>
+                        </td>
+                        <td style="text-align: center;">
+                            <button
+                                class="btn btn-sm btn-primary"
+                                onclick="verComponentes('{{ receta.codigo_platillo }}', '{{ receta.platillo }}')"
+                                title="Ver ingredientes"
+                            >
+                                <i class="fas fa-list-ul"></i>
+                                Ver Receta
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr id="noDataRow">
+                        <td colspan="6" style="text-align: center; padding: 60px;">
+                            <i class="fas fa-box-open" style="font-size: 48px; color: var(--gray-400); margin-bottom: 16px; display: block;"></i>
+                            <p style="color: var(--gray-600); margin: 0;">No hay recetas disponibles</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para ver componentes -->
+<div id="modalComponentes" class="modal-overlay" style="display: none;">
+    <div class="modal-container">
+        <div class="modal-header">
+            <h3>
+                <i class="fas fa-utensils" style="color: var(--primary-color);"></i>
+                <span id="modalTitulo">Componentes de Receta</span>
+            </h3>
+            <button class="modal-close" onclick="cerrarModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="modalLoading" style="text-align: center; padding: 40px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: var(--primary-color);"></i>
+                <p style="margin-top: 16px; color: var(--gray-600);">Cargando ingredientes...</p>
+            </div>
+            <div id="modalContent" style="display: none;">
+                <!-- Info del producto -->
+                <div class="info-producto" style="background: var(--gray-100); padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <small style="color: var(--gray-600);">Código:</small>
+                            <code id="modalCodigo" style="background: white; padding: 4px 8px; border-radius: 4px; margin-left: 8px;"></code>
+                        </div>
+                        <div style="text-align: right;">
+                            <small style="color: var(--gray-600);">Costo Total:</small>
+                            <strong id="modalCostoTotal" style="font-size: 24px; color: var(--success-color); margin-left: 8px;"></strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de ingredientes -->
+                <div class="table-wrapper" style="max-height: 400px; overflow-y: auto;">
+                    <table class="data-table" id="tablaIngredientes">
+                        <thead style="position: sticky; top: 0; background: white;">
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th style="text-align: right;">Cantidad</th>
+                                <th style="text-align: center;">Unidad</th>
+                                <th style="text-align: right;">Costo Unit.</th>
+                                <th style="text-align: right;">Costo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaIngredientesBody">
+                            <!-- Se llena con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="modalError" style="display: none; text-align: center; padding: 40px;">
+                <i class="fas fa-exclamation-circle" style="font-size: 48px; color: var(--danger-color); margin-bottom: 16px;"></i>
+                <p style="color: var(--danger-color);" id="modalErrorMsg">Error al cargar los ingredientes</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Ocultar perfil y logout en submódulos, mantener botón de regreso */
+.user-profile {
+    display: none;
+}
+
+.header-right {
+    display: none;
+}
+
+.main-container {
+    padding-top: 24px;
+}
+
+/* Badge styles */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.badge-info {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Botón pequeño */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 95%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tabla de ingredientes */
+#tablaIngredientes th {
+    background: var(--gray-100);
+    color: var(--secondary-color);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px;
+}
+
+#tablaIngredientes td {
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.ingrediente-sin-costo {
+    background: #fff3cd !important;
+}
+
+.ingrediente-sin-costo td {
+    color: #856404;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-container {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+<script>
+// Filtrar recetas por búsqueda
+function filtrarRecetas() {
+    const busqueda = document.getElementById('buscarReceta').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaRecetas tbody tr[data-codigo]');
+    let visibles = 0;
+
+    filas.forEach(fila => {
+        const codigo = fila.getAttribute('data-codigo').toLowerCase();
+        const nombre = fila.getAttribute('data-nombre').toLowerCase();
+
+        if (codigo.includes(busqueda) || nombre.includes(busqueda)) {
+            fila.style.display = '';
+            visibles++;
+        } else {
+            fila.style.display = 'none';
+        }
+    });
+
+    document.getElementById('contadorRecetas').textContent = visibles;
+}
+
+// Ver componentes de una receta
+async function verComponentes(codigo, nombre) {
+    const modal = document.getElementById('modalComponentes');
+    const loading = document.getElementById('modalLoading');
+    const content = document.getElementById('modalContent');
+    const error = document.getElementById('modalError');
+
+    // Mostrar modal
+    modal.style.display = 'flex';
+    loading.style.display = 'block';
+    content.style.display = 'none';
+    error.style.display = 'none';
+
+    // Actualizar título
+    document.getElementById('modalTitulo').textContent = nombre;
+    document.getElementById('modalCodigo').textContent = codigo;
+
+    try {
+        const response = await fetch(`/reportes/api/componentes-receta/${encodeURIComponent(codigo)}`);
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || 'Error al cargar componentes');
+        }
+
+        // Mostrar costo total (convertir a número por si viene como string)
+        const costoTotal = parseFloat(data.costo_total) || 0;
+        document.getElementById('modalCostoTotal').textContent = `$${costoTotal.toFixed(2)}`;
+
+        // Generar tabla de ingredientes
+        const tbody = document.getElementById('tablaIngredientesBody');
+        tbody.innerHTML = '';
+
+        if (data.componentes.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 30px; color: var(--gray-500);">
+                        No hay ingredientes registrados para esta receta
+                    </td>
+                </tr>
+            `;
+        } else {
+            data.componentes.forEach(comp => {
+                const sinCosto = !comp.costo_unitario || comp.costo_unitario === 0;
+                const tr = document.createElement('tr');
+                if (sinCosto) tr.className = 'ingrediente-sin-costo';
+
+                tr.innerHTML = `
+                    <td>
+                        <strong>${comp.producto}</strong>
+                        ${sinCosto ? '<br><small style="color: #856404;"><i class="fas fa-exclamation-triangle"></i> Sin costo definido</small>' : ''}
+                    </td>
+                    <td style="text-align: right; font-family: monospace;">${parseFloat(comp.cantidad).toFixed(2)}</td>
+                    <td style="text-align: center;">
+                        <span style="background: var(--gray-200); padding: 2px 8px; border-radius: 4px; font-size: 12px;">
+                            ${comp.unidad_medida}
+                        </span>
+                    </td>
+                    <td style="text-align: right; font-family: monospace;">$${parseFloat(comp.costo_unitario || 0).toFixed(4)}</td>
+                    <td style="text-align: right;">
+                        <strong style="color: ${sinCosto ? '#856404' : 'var(--success-color)'};">
+                            $${parseFloat(comp.costo_ingrediente || 0).toFixed(4)}
+                        </strong>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Mostrar contenido
+        loading.style.display = 'none';
+        content.style.display = 'block';
+
+    } catch (err) {
+        console.error('Error:', err);
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        document.getElementById('modalErrorMsg').textContent = err.message;
+    }
+}
+
+// Cerrar modal
+function cerrarModal() {
+    document.getElementById('modalComponentes').style.display = 'none';
+}
+
+// Cerrar modal con click fuera
+document.getElementById('modalComponentes').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModal();
+    }
+});
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        cerrarModal();
+    }
+});
+</script>
+{% endblock %}

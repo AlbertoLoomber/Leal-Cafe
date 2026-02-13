@@ -1,0 +1,940 @@
+{% extends "base.html" %}
+
+{% block title %}Metas Mensuales - Leal Café{% endblock %}
+
+{% block btn_back %}
+<a href="{{ url_for('modulo_ventas') }}" class="btn-back">
+    <i class="fas fa-arrow-left"></i>
+    Volver
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Contenedor de notificaciones toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Header del Módulo -->
+<div class="module-header">
+    <div class="module-icon">
+        <i class="fas fa-bullseye"></i>
+    </div>
+    <div class="module-info">
+        <h1>Metas Mensuales</h1>
+        <p>Seguimiento y cumplimiento de objetivos de ventas por sucursal</p>
+    </div>
+</div>
+
+<!-- Filtros y Acciones -->
+<div class="filters-section">
+    <div class="filters-container">
+        <!-- Filtro de Mes -->
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-calendar-alt"></i> Período
+            </label>
+            <select id="filtroMes" class="form-control">
+                <option value="1">Enero 2026</option>
+                <option value="2" selected>Febrero 2026</option>
+                <option value="3">Marzo 2026</option>
+                <option value="4">Abril 2026</option>
+                <option value="5">Mayo 2026</option>
+                <option value="6">Junio 2026</option>
+                <option value="7">Julio 2026</option>
+                <option value="8">Agosto 2026</option>
+                <option value="9">Septiembre 2026</option>
+                <option value="10">Octubre 2026</option>
+                <option value="11">Noviembre 2026</option>
+                <option value="12">Diciembre 2026</option>
+            </select>
+        </div>
+
+        <!-- Botón Nueva Meta -->
+        <button type="button" class="btn-primary" onclick="abrirModalMeta()">
+            <i class="fas fa-plus"></i>
+            Nueva Meta
+        </button>
+
+        <!-- Botón Configurar Metas -->
+        <button type="button" class="btn-secondary" onclick="configurarMetas()">
+            <i class="fas fa-cog"></i>
+            Configurar Todas
+        </button>
+    </div>
+</div>
+
+<!-- Grid de Metas con Varometros -->
+<div class="metas-grid" id="metasContainer">
+    {% for meta in metas %}
+    <div class="meta-card" data-sucursal="{{ meta.sucursal }}">
+        <div class="card h-100 shadow-sm">
+            <!-- Header de la Card -->
+            <div class="card-header">
+                <div class="header-content">
+                    <h6 class="sucursal-title">
+                        <i class="fas fa-signal signal-icon"
+                           style="color: {% if meta.porcentaje_cumplimiento >= 100 %}#28a745{% elif meta.porcentaje_cumplimiento >= 50 %}#ffc107{% else %}#dc3545{% endif %};"></i>
+                        {{ meta.sucursal }}
+                    </h6>
+                    <div class="status-indicator"
+                         style="background: {% if meta.porcentaje_cumplimiento >= 100 %}#28a745{% elif meta.porcentaje_cumplimiento >= 50 %}#ffc107{% else %}#dc3545{% endif %};">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body de la Card con Varometro -->
+            <div class="card-body text-center">
+                <!-- Varometro SVG -->
+                <div class="barometer-container">
+                    <svg width="280" height="150" viewBox="0 0 280 150">
+                        <!-- Fondo para el texto "META" -->
+                        <rect x="237" y="28" width="35" height="18" rx="3" ry="3"
+                              fill="rgba(255, 255, 255, 0.9)" stroke="rgba(44, 44, 44, 0.2)" stroke-width="1"/>
+                        <text x="254.5" y="40" font-family="Arial, sans-serif" font-size="10"
+                              font-weight="600" fill="#2C2C2C" text-anchor="middle">META</text>
+
+                        <!-- Arco de fondo (gris) -->
+                        <path d="M 20 128 A 120 120 0 0 1 260 128"
+                              fill="none" stroke="#e9ecef" stroke-width="15" stroke-linecap="round"/>
+
+                        <!-- Gradiente para el arco de progreso -->
+                        <defs>
+                            <linearGradient id="barometer-gradient-{{ loop.index }}" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#dc3545;stop-opacity:1" />
+                                <stop offset="20%" style="stop-color:#e8722b;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#ffc107;stop-opacity:1" />
+                                <stop offset="80%" style="stop-color:#7cb342;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#28a745;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Arco de progreso (coloreado según porcentaje) -->
+                        <path d="M 20 128 A 120 120 0 {{ meta.arc_large }} 1 {{ meta.arc_x }} {{ meta.arc_y }}"
+                              fill="none" stroke="url(#barometer-gradient-{{ loop.index }})"
+                              stroke-width="15" stroke-linecap="round"/>
+
+                        <!-- Marcador de posición actual (punto) -->
+                        <circle cx="{{ meta.arc_x }}" cy="{{ meta.arc_y }}" r="8" fill="#2C2C2C" stroke="white" stroke-width="3"/>
+
+                        <!-- Porcentaje central -->
+                        <text x="140" y="110" font-family="Arial, sans-serif" font-size="36"
+                              font-weight="bold" fill="#2C2C2C" text-anchor="middle">
+                            {{ meta.porcentaje_cumplimiento }}%
+                        </text>
+                    </svg>
+                </div>
+
+                <!-- Información de Ventas y Meta con fondos de colores - HORIZONTAL -->
+                <div class="metrics-boxes">
+                    <!-- Ventas Reales - Fondo Verde -->
+                    <div class="metric-box metric-ventas">
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span class="metric-label">Ventas Reales</span>
+                        <span class="metric-value">${{ "{:,.0f}".format(meta.ventas_reales) }}</span>
+                    </div>
+
+                    <!-- Meta Período - Fondo Azul -->
+                    <div class="metric-box metric-meta">
+                        <div class="metric-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <span class="metric-label">Meta Período</span>
+                        <span class="metric-value">${{ "{:,.0f}".format(meta.meta_monto) }}</span>
+                    </div>
+                </div>
+
+                <!-- Diferencia en recuadro rosado -->
+                <div class="difference-box">
+                    <i class="fas fa-arrow-down"></i>
+                    <span class="difference-value">${{ "{:,.0f}".format(meta.diferencia | abs) }}</span>
+                    <span class="difference-label">diferencia</span>
+                </div>
+
+                <!-- Estado Badge -->
+                <div class="status-container">
+                    {% if meta.porcentaje_cumplimiento >= 100 %}
+                        <span class="status-badge cumplido">
+                            <i class="fas fa-check-circle"></i> Cumplido
+                        </span>
+                    {% elif meta.porcentaje_cumplimiento >= 50 %}
+                        <span class="status-badge en-progreso">
+                            <i class="fas fa-clock"></i> En Progreso
+                        </span>
+                    {% else %}
+                        <span class="status-badge requiere-accion">
+                            <i class="fas fa-exclamation-triangle"></i> Requiere Acción
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal para Nueva/Editar Meta -->
+<div id="modalMeta" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitulo">
+                <i class="fas fa-bullseye"></i>
+                Nueva Meta Mensual
+            </h2>
+            <button type="button" class="close" onclick="cerrarModalMeta()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form id="formMeta">
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <!-- Sucursal -->
+                    <div class="form-group">
+                        <label class="required">
+                            <i class="fas fa-store"></i> Sucursal
+                        </label>
+                        <select id="sucursal" name="sucursal" class="form-control" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="Centro">Centro</option>
+                            <option value="LM">LM</option>
+                            <option value="Auditorio">Auditorio</option>
+                            <option value="Ahumada">Ahumada</option>
+                        </select>
+                    </div>
+
+                    <!-- Mes -->
+                    <div class="form-group">
+                        <label class="required">
+                            <i class="fas fa-calendar"></i> Mes
+                        </label>
+                        <select id="mes" name="mes" class="form-control" required>
+                            <option value="1">Enero</option>
+                            <option value="2" selected>Febrero</option>
+                            <option value="3">Marzo</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Mayo</option>
+                            <option value="6">Junio</option>
+                            <option value="7">Julio</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Septiembre</option>
+                            <option value="10">Octubre</option>
+                            <option value="11">Noviembre</option>
+                            <option value="12">Diciembre</option>
+                        </select>
+                    </div>
+
+                    <!-- Año -->
+                    <div class="form-group">
+                        <label class="required">
+                            <i class="fas fa-calendar-alt"></i> Año
+                        </label>
+                        <input type="number" id="anio" name="anio" class="form-control"
+                               value="2026" min="2020" max="2030" required>
+                    </div>
+
+                    <!-- Monto de la Meta -->
+                    <div class="form-group">
+                        <label class="required">
+                            <i class="fas fa-dollar-sign"></i> Meta de Ventas
+                        </label>
+                        <input type="number" id="metaMonto" name="metaMonto" class="form-control"
+                               placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <!-- Comentarios -->
+                <div class="form-group mt-3">
+                    <label>
+                        <i class="fas fa-comment"></i> Comentarios
+                    </label>
+                    <textarea id="comentarios" name="comentarios" class="form-control"
+                              rows="3" placeholder="Comentarios adicionales (opcional)"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="cerrarModalMeta()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar Meta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Variables de colores */
+:root {
+    --primary-color: #8B6914;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --gray-100: #f7fafc;
+    --gray-200: #edf2f7;
+    --gray-500: #a0aec0;
+    --gray-700: #2d3748;
+}
+
+/* Filtros Section */
+.filters-section {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+}
+
+.filters-container {
+    display: flex;
+    gap: 16px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray-700);
+    font-size: 14px;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Grid de Metas */
+.metas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    margin-bottom: 32px;
+}
+
+/* Meta Card */
+.meta-card {
+    transition: all 0.3s ease;
+}
+
+.meta-card .card {
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    transition: all 0.3s ease;
+}
+
+.meta-card:hover .card {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    border-color: #cbd5e0;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 20px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sucursal-title {
+    color: #2d3748;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.signal-icon {
+    font-size: 16px;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.card-body {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Varometro */
+.barometer-container {
+    width: 280px;
+    height: 150px;
+    margin: 0 auto 12px;
+}
+
+/* Métricas con fondos de colores - HORIZONTAL */
+.metrics-boxes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 12px 0 10px 0;
+}
+
+.metric-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    min-height: 80px;
+}
+
+.metric-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Ventas Reales - Verde */
+.metric-ventas {
+    background: #d1fae5;
+}
+
+.metric-ventas .metric-icon {
+    color: #065f46;
+}
+
+/* Meta Período - Azul */
+.metric-meta {
+    background: #dbeafe;
+}
+
+.metric-meta .metric-icon {
+    color: #1e40af;
+}
+
+.metric-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metric-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
+    gap: 6px;
+}
+
+.metric-label {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-weight: 500;
+    line-height: 1;
+}
+
+.metric-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-700);
+    line-height: 1.1;
+}
+
+/* Diferencia - Recuadro Rosado */
+.difference-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: #fee2e2;
+    border-radius: 12px;
+    margin: 8px 0;
+    min-height: 50px;
+    height: 50px;
+}
+
+.difference-box i {
+    color: #991b1b;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.difference-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #991b1b;
+    line-height: 1;
+}
+
+.difference-label {
+    font-size: 11px;
+    color: #991b1b;
+    opacity: 0.8;
+    line-height: 1;
+}
+
+/* Status Container */
+.status-container {
+    margin: 8px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 40px;
+    line-height: 1;
+}
+
+.status-badge i {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.status-badge.cumplido {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.en-progreso {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-badge.requiere-accion {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Botones Principales */
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #6d5310;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 105, 20, 0.3);
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-500);
+    color: white;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    padding: 24px;
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.modal-header .close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--gray-500);
+    transition: color 0.2s;
+}
+
+.modal-header .close:hover {
+    color: var(--danger-color);
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-footer {
+    padding: 24px;
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Form Grid */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray-700);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.form-group label.required::after {
+    content: '*';
+    color: var(--danger-color);
+    margin-left: 4px;
+}
+
+.form-control {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.1);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Notificaciones Toast */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast {
+    min-width: 350px;
+    max-width: 450px;
+    padding: 18px 22px;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: slideInBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), fadeOut 0.3s ease 2.7s;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.toast.success {
+    border-color: #8B6914;
+    color: #2d3748;
+}
+
+.toast.success::before {
+    background: linear-gradient(135deg, #8B6914 0%, #6F5936 100%);
+}
+
+.toast.success i {
+    color: #8B6914;
+    background: linear-gradient(135deg, rgba(139, 105, 20, 0.1) 0%, rgba(111, 89, 54, 0.1) 100%);
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 22px;
+}
+
+.toast-message {
+    flex: 1;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@keyframes slideInBounce {
+    0% {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    60% {
+        transform: translateX(-8px);
+        opacity: 1;
+    }
+    80% {
+        transform: translateX(4px);
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .metas-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .metas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .barometer-container {
+        width: 240px;
+        height: 130px;
+    }
+
+    .barometer-container svg {
+        width: 240px;
+        height: 130px;
+    }
+
+    /* En pantallas pequeñas, las métricas vuelven a columna */
+    .metrics-boxes {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables globales
+let metaEditando = null;
+
+// ==================== FUNCIONES UI ====================
+
+function abrirModalMeta(meta = null) {
+    const modal = document.getElementById('modalMeta');
+    const form = document.getElementById('formMeta');
+
+    if (meta) {
+        // Editar meta existente
+        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-edit"></i> Editar Meta';
+        metaEditando = meta;
+
+        // Llenar formulario
+        document.getElementById('sucursal').value = meta.sucursal;
+        document.getElementById('mes').value = meta.mes;
+        document.getElementById('anio').value = meta.anio;
+        document.getElementById('metaMonto').value = meta.meta_monto;
+        document.getElementById('comentarios').value = meta.comentarios || '';
+    } else {
+        // Nueva meta
+        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-bullseye"></i> Nueva Meta Mensual';
+        metaEditando = null;
+        form.reset();
+    }
+
+    modal.classList.add('active');
+}
+
+function cerrarModalMeta() {
+    const modal = document.getElementById('modalMeta');
+    modal.classList.remove('active');
+    metaEditando = null;
+}
+
+function editarMeta(sucursal) {
+    // TODO: Obtener datos de la meta de la BD
+    mostrarMensaje('Función de editar meta - Próximamente', 'success');
+}
+
+function configurarMetas() {
+    mostrarMensaje('Configuración masiva de metas - Próximamente', 'success');
+}
+
+function mostrarMensaje(mensaje, tipo) {
+    const container = document.getElementById('toastContainer');
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${tipo}`;
+
+    const icon = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+    toast.innerHTML = `
+        <i class="fas ${icon}"></i>
+        <span class="toast-message">${mensaje}</span>
+    `;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+
+// ==================== EVENT HANDLERS ====================
+
+// Submit del formulario
+document.getElementById('formMeta').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    // TODO: Enviar datos al backend cuando esté implementado
+    console.log('Datos de la meta:', {
+        sucursal: formData.get('sucursal'),
+        mes: formData.get('mes'),
+        anio: formData.get('anio'),
+        metaMonto: formData.get('metaMonto'),
+        comentarios: formData.get('comentarios')
+    });
+
+    mostrarMensaje('Guardado de meta - Próximamente (conectar a BD)', 'success');
+    cerrarModalMeta();
+});
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('modalMeta');
+    if (event.target === modal) {
+        cerrarModalMeta();
+    }
+}
+
+// ==================== INICIALIZACIÓN ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Módulo de Metas cargado - Usando datos de prueba');
+});
+</script>
+{% endblock %}

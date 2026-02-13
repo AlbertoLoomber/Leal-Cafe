@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Leal Café{% endblock %}
+
+{% block content %}
+<!-- Título de Módulos -->
+<div class="section-title">
+    <i class="fas fa-th-large"></i>
+    <span>Módulos del Sistema</span>
+</div>
+
+<!-- Grid de Módulos -->
+<div class="modules-grid">
+    <!-- Módulo VENTAS -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-icon module-icon-brown">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="module-info">
+                <h3>Ventas</h3>
+                <span class="module-code">Código: VENTAS</span>
+            </div>
+        </div>
+        <p class="module-description">Análisis de ventas, reportes y catálogo de productos</p>
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-label">SUBMÓDULOS</span>
+                <span class="stat-value">3</span>
+            </div>
+        </div>
+        <a href="{{ url_for('modulo_ventas') }}" class="module-btn module-btn-brown">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Módulo CONTABILIDAD -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-icon module-icon-green">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <div class="module-info">
+                <h3>Contabilidad</h3>
+                <span class="module-code">Código: CONTABILIDAD</span>
+            </div>
+        </div>
+        <p class="module-description">Gestión de gastos y reportes financieros</p>
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-label">SUBMÓDULOS</span>
+                <span class="stat-value">2</span>
+            </div>
+        </div>
+        <a href="{{ url_for('modulo_contabilidad') }}" class="module-btn module-btn-green">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- Módulo OPERATIVO -->
+    <div class="module-card">
+        <div class="module-header">
+            <div class="module-icon module-icon-orange">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <div class="module-info">
+                <h3>Operativo</h3>
+                <span class="module-code">Código: OPERATIVO</span>
+            </div>
+        </div>
+        <p class="module-description">Carga de datos y registro de tareas operativas</p>
+        <div class="module-stats">
+            <div class="stat-item">
+                <span class="stat-label">SUBMÓDULOS</span>
+                <span class="stat-value">2</span>
+            </div>
+        </div>
+        <a href="{{ url_for('modulo_operativo') }}" class="module-btn module-btn-orange">
+            Abrir módulo <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Título de Sección */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.section-title i {
+    color: var(--text-muted);
+    font-size: 18px;
+}
+
+.section-title span {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+}
+
+/* Grid de Módulos */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px;
+}
+
+/* Card de Módulo - Neumórfico */
+.module-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 28px;
+    transition: all 0.3s ease;
+    /* Neumorfismo */
+    box-shadow:
+        8px 8px 16px var(--shadow-dark),
+        -8px -8px 16px var(--shadow-light);
+}
+
+.module-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        12px 12px 24px var(--shadow-dark),
+        -12px -12px 24px var(--shadow-light);
+}
+
+.module-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    padding: 20px;
+    border-radius: 14px;
+    margin: -8px -8px 18px -8px;
+}
+
+/* Fondos con gradientes para cada módulo - Todos color café */
+.module-card .module-header {
+    background: linear-gradient(135deg, #8B6F47 0%, #6F5936 100%);
+}
+
+/* Iconos de Módulo - Ahora con fondo blanco translúcido */
+.module-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.module-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.module-info h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    letter-spacing: -0.3px;
+}
+
+.module-code {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.module-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin: 0 0 22px 0;
+    line-height: 1.6;
+}
+
+.module-stats {
+    display: flex;
+    gap: 24px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(163, 177, 198, 0.3);
+    margin-bottom: 22px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Botones de Módulo - Neumórficos */
+.module-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--bg-primary);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* Neumorfismo */
+    box-shadow:
+        4px 4px 8px var(--shadow-dark),
+        -4px -4px 8px var(--shadow-light);
+}
+
+.module-btn:hover {
+    box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+}
+
+.module-btn-brown { color: var(--color-ventas); }
+.module-btn-green { color: var(--color-contabilidad); }
+.module-btn-orange { color: var(--color-operativo); }
+
+.module-btn i {
+    transition: transform 0.3s ease;
+}
+
+.module-btn:hover i {
+    transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modules-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .module-card {
+        padding: 22px;
+    }
+
+    .module-info h3 {
+        font-size: 18px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+}
+</style>
+{% endblock %}
