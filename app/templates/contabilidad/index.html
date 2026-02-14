@@ -1127,6 +1127,9 @@ function renderizarTabla() {
     // Obtener datos filtrados y ordenados
     const datosFiltrados = obtenerGastosFiltrados();
 
+    // Actualizar tarjetas de resumen con datos filtrados
+    actualizarResumenFiltrado(datosFiltrados);
+
     if (datosFiltrados.length === 0) {
         tbody.innerHTML = `
             <tr>
@@ -1209,6 +1212,18 @@ function actualizarResumen(data) {
 
     document.getElementById('totalGastosMes').textContent = `$${totalMes.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
     document.getElementById('cantidadGastos').textContent = cantidadGastos;
+    document.getElementById('gastosFacturados').textContent = `$${totalFacturado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+}
+
+function actualizarResumenFiltrado(datosFiltrados) {
+    const total = datosFiltrados.reduce((sum, g) => sum + g.monto, 0);
+    const cantidad = datosFiltrados.length;
+    const totalFacturado = datosFiltrados
+        .filter(g => g.facturado)
+        .reduce((sum, g) => sum + g.monto, 0);
+
+    document.getElementById('totalGastosMes').textContent = `$${total.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('cantidadGastos').textContent = cantidad;
     document.getElementById('gastosFacturados').textContent = `$${totalFacturado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 }
 
