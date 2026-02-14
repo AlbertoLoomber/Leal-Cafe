@@ -7,6 +7,11 @@
     <i class="fas fa-arrow-left"></i>
     Volver
 </a>
+<nav class="breadcrumb" aria-label="Navegación de migas de pan">
+    <a href="{{ url_for('dashboard') }}" class="breadcrumb-item">Dashboard</a>
+    <span class="breadcrumb-separator">/</span>
+    <span class="breadcrumb-item breadcrumb-active">Ventas</span>
+</nav>
 {% endblock %}
 
 {% block content %}
@@ -88,17 +93,63 @@
 
 {% block extra_css %}
 <style>
-/* Ocultar perfil y logout en módulos, mantener botón de regreso */
+/* Ajustes de header en módulos - Mantener contexto del usuario */
 .user-profile {
-    display: none;
+    display: flex;
 }
 
 .header-right {
-    display: none;
+    display: flex;
+}
+
+/* Ocultar solo nombre de usuario en móviles para ahorrar espacio */
+@media (max-width: 768px) {
+    .user-name {
+        display: none;
+    }
 }
 
 .main-container {
     padding-top: 24px;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--gray-50);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    margin-left: var(--space-lg);
+}
+
+.breadcrumb-item {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+.breadcrumb-item:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumb-active {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.breadcrumb-separator {
+    color: var(--gray-400);
+    user-select: none;
+}
+
+/* Ocultar breadcrumb en móviles muy pequeños */
+@media (max-width: 480px) {
+    .breadcrumb {
+        display: none;
+    }
 }
 
 /* Header del Módulo */
@@ -254,7 +305,7 @@
     gap: 10px;
     width: 100%;
     padding: 14px 24px;
-    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    background: linear-gradient(135deg, #8B7355 0%, #A68B64 100%);
     color: white;
     border: none;
     border-radius: 12px;
@@ -263,12 +314,12 @@
     text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3);
+    box-shadow: 0 2px 8px rgba(139, 115, 85, 0.3);
 }
 
 .submodule-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+    box-shadow: 0 6px 20px rgba(139, 115, 85, 0.4);
 }
 
 .submodule-btn i {

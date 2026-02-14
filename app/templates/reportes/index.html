@@ -156,7 +156,7 @@
     </h2>
 
     <div class="table-container">
-        <table class="data-table">
+        <table class="data-table table-card">
             <thead>
                 <tr>
                     <th>Sucursal</th>
@@ -171,16 +171,16 @@
             <tbody>
                 {% for sucursal in sucursales %}
                 <tr>
-                    <td class="sucursal-name">
+                    <td data-label="Sucursal" class="sucursal-name">
                         <i class="fas fa-map-marker-alt"></i>
                         {{ sucursal.sucursal }}
                     </td>
-                    <td class="money">${{ "{:,.2f}".format(sucursal.ventas_totales) }}</td>
-                    <td class="money">${{ "{:,.2f}".format(sucursal.costo_venta_total) }}</td>
-                    <td class="percent">{{ "{:.1f}".format(sucursal.porcentaje_costo) }}%</td>
-                    <td class="money success">${{ "{:,.2f}".format(sucursal.ingreso_real) }}</td>
-                    <td class="percent">{{ "{:.1f}".format(sucursal.porcentaje_ingreso) }}%</td>
-                    <td class="percent roi">{{ "{:.1f}".format(sucursal.roi) }}%</td>
+                    <td data-label="Ventas Totales" class="money">${{ "{:,.2f}".format(sucursal.ventas_totales) }}</td>
+                    <td data-label="Costo de Venta" class="money">${{ "{:,.2f}".format(sucursal.costo_venta_total) }}</td>
+                    <td data-label="% Costo" class="percent">{{ "{:.1f}".format(sucursal.porcentaje_costo) }}%</td>
+                    <td data-label="Ingreso Real" class="money success">${{ "{:,.2f}".format(sucursal.ingreso_real) }}</td>
+                    <td data-label="% Ingreso" class="percent">{{ "{:.1f}".format(sucursal.porcentaje_ingreso) }}%</td>
+                    <td data-label="ROI" class="percent roi">{{ "{:.1f}".format(sucursal.roi) }}%</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -196,7 +196,7 @@
     </h2>
 
     <div class="table-container">
-        <table class="data-table">
+        <table class="data-table table-card">
             <thead>
                 <tr>
                     <th>Producto</th>
@@ -212,16 +212,16 @@
                 {% if productos %}
                     {% for producto in productos %}
                     <tr>
-                        <td class="producto-name">
+                        <td data-label="Producto" class="producto-name">
                             <i class="fas fa-box"></i>
                             {{ producto.nombre_platillo }}
                         </td>
-                        <td class="money">${{ "{:,.2f}".format(producto.ventas_totales) }}</td>
-                        <td class="money">${{ "{:,.2f}".format(producto.costo_venta_total) }}</td>
-                        <td class="percent">{{ "{:.1f}".format(producto.porcentaje_costo) }}%</td>
-                        <td class="money success">${{ "{:,.2f}".format(producto.ingreso_real) }}</td>
-                        <td class="percent">{{ "{:.1f}".format(producto.porcentaje_ingreso) }}%</td>
-                        <td class="percent roi">{{ "{:.1f}".format(producto.roi) }}%</td>
+                        <td data-label="Ventas Totales" class="money">${{ "{:,.2f}".format(producto.ventas_totales) }}</td>
+                        <td data-label="Costo de Venta" class="money">${{ "{:,.2f}".format(producto.costo_venta_total) }}</td>
+                        <td data-label="% Costo" class="percent">{{ "{:.1f}".format(producto.porcentaje_costo) }}%</td>
+                        <td data-label="Ingreso Real" class="money success">${{ "{:,.2f}".format(producto.ingreso_real) }}</td>
+                        <td data-label="% Ingreso" class="percent">{{ "{:.1f}".format(producto.porcentaje_ingreso) }}%</td>
+                        <td data-label="ROI" class="percent roi">{{ "{:.1f}".format(producto.roi) }}%</td>
                     </tr>
                     {% endfor %}
                 {% else %}

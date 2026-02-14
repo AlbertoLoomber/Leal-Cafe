@@ -15,7 +15,7 @@
 
 <div class="module-header">
     <div class="module-icon">
-        <i class="fas fa-calculator"></i>
+        <i class="fas fa-calculator" aria-hidden="true"></i>
     </div>
     <div class="module-info">
         <h1>Gestión de Gastos</h1>
@@ -29,7 +29,7 @@
         <!-- Filtro de Mes -->
         <div class="filter-group">
             <label>
-                <i class="fas fa-calendar-alt"></i> Mes
+                <i class="fas fa-calendar-alt" aria-hidden="true"></i> Mes
             </label>
             <select id="filtroMes" class="form-control">
                 <option value="1">Enero 2026</option>
@@ -47,15 +47,57 @@
             </select>
         </div>
 
+        <!-- Filtro de Sucursal -->
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-store" aria-hidden="true"></i> Sucursal
+            </label>
+            <select id="filtroSucursal" class="form-control">
+                <option value="">Todas</option>
+            </select>
+        </div>
+
+        <!-- Filtro de Tipo -->
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-tags" aria-hidden="true"></i> Tipo
+            </label>
+            <select id="filtroTipo" class="form-control">
+                <option value="">Todos</option>
+            </select>
+        </div>
+
+        <!-- Filtro de Categoría -->
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-folder" aria-hidden="true"></i> Categoría
+            </label>
+            <select id="filtroCategoria" class="form-control">
+                <option value="">Todas</option>
+            </select>
+        </div>
+
+        <!-- Botón Ordenar por Monto -->
+        <div class="filter-group">
+            <label>
+                <i class="fas fa-sort-amount-down" aria-hidden="true"></i> Ordenar
+            </label>
+            <select id="ordenMonto" class="form-control">
+                <option value="">Sin orden</option>
+                <option value="desc">Mayor a menor</option>
+                <option value="asc">Menor a mayor</option>
+            </select>
+        </div>
+
         <!-- Botón Nuevo Gasto -->
-        <button type="button" class="btn-primary" onclick="abrirModalGasto()">
-            <i class="fas fa-plus"></i>
+        <button type="button" id="btnNuevoGasto" class="btn-primary" onclick="abrirModalGasto()">
+            <i class="fas fa-plus" aria-hidden="true"></i>
             Nuevo Gasto
         </button>
 
         <!-- Botón Exportar -->
         <button type="button" class="btn-success" onclick="exportarGastos()">
-            <i class="fas fa-file-excel"></i>
+            <i class="fas fa-file-excel" aria-hidden="true"></i>
             Exportar
         </button>
     </div>
@@ -65,7 +107,7 @@
 <div class="summary-cards">
     <div class="summary-card">
         <div class="summary-icon danger">
-            <i class="fas fa-money-bill-wave"></i>
+            <i class="fas fa-money-bill-wave" aria-hidden="true"></i>
         </div>
         <div class="summary-info">
             <span class="summary-label">Total Gastos del Mes</span>
@@ -75,7 +117,7 @@
 
     <div class="summary-card">
         <div class="summary-icon primary">
-            <i class="fas fa-receipt"></i>
+            <i class="fas fa-receipt" aria-hidden="true"></i>
         </div>
         <div class="summary-info">
             <span class="summary-label">Total Gastos Registrados</span>
@@ -85,7 +127,7 @@
 
     <div class="summary-card">
         <div class="summary-icon success">
-            <i class="fas fa-check-circle"></i>
+            <i class="fas fa-check-circle" aria-hidden="true"></i>
         </div>
         <div class="summary-info">
             <span class="summary-label">Gastos Facturados</span>
@@ -99,7 +141,7 @@
     <h3 style="margin: 0 0 20px 0;">Gastos Registrados</h3>
 
     <div class="table-responsive">
-        <table class="data-table" id="tablaGastos">
+        <table class="data-table table-card" id="tablaGastos">
             <thead>
                 <tr>
                     <th>Fecha</th>
@@ -118,9 +160,20 @@
             <tbody>
                 <!-- Los datos se cargarán dinámicamente -->
                 <tr>
-                    <td colspan="11" style="text-align: center; padding: 40px; color: var(--gray-500);">
-                        <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
-                        No hay gastos registrados para este mes
+                    <td colspan="11">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox empty-state-icon" aria-hidden="true"></i>
+                            <h3 class="empty-state-title">No hay gastos registrados</h3>
+                            <p class="empty-state-message">
+                                Registra tu primer gasto para comenzar el seguimiento financiero de este mes
+                            </p>
+                            <div class="empty-state-action">
+                                <button class="btn btn-primary" onclick="abrirModalGasto()">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                    Registrar Gasto
+                                </button>
+                            </div>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -137,141 +190,137 @@
 </div>
 
 <!-- Modal para Nuevo/Editar Gasto -->
-<div id="modalGasto" class="modal">
+<div id="modalGasto" class="modal" role="dialog" aria-labelledby="modalTitulo" aria-modal="true">
     <div class="modal-content modal-large">
         <div class="modal-header">
             <h2 id="modalTitulo">
-                <i class="fas fa-plus-circle"></i>
+                <i class="fas fa-plus-circle" aria-hidden="true"></i>
                 Registrar Nuevo Gasto
             </h2>
-            <button type="button" class="close" onclick="cerrarModalGasto()">
-                <i class="fas fa-times"></i>
+            <button type="button" class="close" onclick="cerrarModalGasto()" aria-label="Cerrar modal">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
 
         <form id="formGasto">
             <div class="modal-body">
-                <div class="form-grid-3">
-                    <!-- Fecha -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-calendar"></i> Fecha
-                        </label>
-                        <input type="date" id="fecha" name="fecha" class="form-control" required>
-                    </div>
-
-                    <!-- Sucursal -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-store"></i> Sucursal
-                        </label>
-                        <select id="sucursal" name="sucursal" class="form-control" required>
-                            <option value="">Seleccionar...</option>
-                            <option value="Centro">Centro</option>
-                            <option value="LM">LM</option>
-                            <option value="Auditorio">Auditorio</option>
-                            <option value="Ahumada">Ahumada</option>
-                        </select>
-                    </div>
-
-                    <!-- Tipo de Gasto -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-tag"></i> Tipo de Gasto
-                        </label>
-                        <select id="tipoGasto" name="tipoGasto" class="form-control" required>
-                            <option value="">Seleccionar...</option>
-                            <option value="Variable">Variable</option>
-                            <option value="Fijo">Fijo</option>
-                        </select>
-                    </div>
-
-                    <!-- Categoría -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-folder"></i> Categoría
-                        </label>
-                        <select id="categoria" name="categoria" class="form-control" required onchange="toggleOtraCategoria()">
-                            <option value="">Seleccionar...</option>
-                            <option value="Insumos">Insumos</option>
-                            <option value="Nómina">Nómina</option>
-                            <option value="Renta">Renta</option>
-                            <option value="Servicios">Servicios</option>
-                            <option value="Mantenimiento">Mantenimiento</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Administración">Administración</option>
-                            <option value="Otro">Otro (especificar)</option>
-                        </select>
-                    </div>
-
-                    <!-- Otra Categoría (oculto por defecto) -->
-                    <div class="form-group" id="otraCategoriaGroup" style="display: none;">
-                        <label class="required">
-                            <i class="fas fa-edit"></i> Especificar Categoría
-                        </label>
-                        <input type="text" id="otraCategoria" name="otraCategoria" class="form-control" placeholder="Escribe la categoría">
-                    </div>
-
-                    <!-- Descripción -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-align-left"></i> Descripción
-                        </label>
-                        <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Describe el gasto" required>
-                    </div>
-
-                    <!-- Forma de Pago -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-credit-card"></i> Forma de Pago
-                        </label>
-                        <select id="formaPago" name="formaPago" class="form-control" required>
-                            <option value="">Seleccionar...</option>
-                            <option value="Efectivo">Efectivo</option>
-                            <option value="Transferencia">Transferencia</option>
-                            <option value="Tarjeta">Tarjeta</option>
-                            <option value="Vale">Vale</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-
-                    <!-- Monto -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-dollar-sign"></i> Monto
-                        </label>
-                        <input type="number" id="monto" name="monto" class="form-control" placeholder="0.00" step="0.01" min="0" required>
-                    </div>
-
-                    <!-- ¿Facturado? -->
-                    <div class="form-group">
-                        <label class="required">
-                            <i class="fas fa-file-invoice"></i> ¿Facturado?
-                        </label>
-                        <select id="facturado" name="facturado" class="form-control" required>
-                            <option value="">Seleccionar...</option>
-                            <option value="Sí">Sí</option>
-                            <option value="No">No</option>
-                        </select>
+                <!-- Sección 1: Información General -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-calendar" aria-hidden="true"></i>
+                        Información General
+                    </h4>
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label class="required">Fecha</label>
+                            <input type="date" id="fecha" name="fecha" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Sucursal</label>
+                            <select id="sucursal" name="sucursal" class="form-control" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Centro">Centro</option>
+                                <option value="LM">LM</option>
+                                <option value="Auditorio">Auditorio</option>
+                                <option value="Ahumada">Ahumada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Tipo de Gasto</label>
+                            <select id="tipoGasto" name="tipoGasto" class="form-control" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Variable">Variable</option>
+                                <option value="Fijo">Fijo</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Comentarios (campo largo) -->
-                <div class="form-group">
-                    <label>
-                        <i class="fas fa-comment"></i> Comentarios
-                    </label>
-                    <textarea id="comentarios" name="comentarios" class="form-control" rows="3" placeholder="Comentarios adicionales (opcional)"></textarea>
+                <!-- Sección 2: Clasificación -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-folder" aria-hidden="true"></i>
+                        Clasificación del Gasto
+                    </h4>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label class="required">Categoría</label>
+                            <select id="categoria" name="categoria" class="form-control" required onchange="toggleOtraCategoria()">
+                                <option value="">Seleccionar...</option>
+                                <option value="Insumos">Insumos</option>
+                                <option value="Nómina">Nómina</option>
+                                <option value="Renta">Renta</option>
+                                <option value="Servicios">Servicios</option>
+                                <option value="Mantenimiento">Mantenimiento</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Administración">Administración</option>
+                                <option value="Otro">Otro (especificar)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="otraCategoriaGroup" style="display: none;">
+                            <label class="required">Especificar Categoría</label>
+                            <input type="text" id="otraCategoria" name="otraCategoria" class="form-control" placeholder="Escribe la categoría">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Descripción</label>
+                        <input type="text" id="descripcion" name="descripcion" class="form-control" placeholder="Describe el gasto" required>
+                    </div>
+                </div>
+
+                <!-- Sección 3: Detalles Financieros -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-dollar-sign" aria-hidden="true"></i>
+                        Detalles Financieros
+                    </h4>
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label class="required">Monto</label>
+                            <input type="number" id="monto" name="monto" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Forma de Pago</label>
+                            <select id="formaPago" name="formaPago" class="form-control" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Vale">Vale</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">¿Facturado?</label>
+                            <select id="facturado" name="facturado" class="form-control" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Sí">Sí</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección 4: Comentarios -->
+                <div class="form-section">
+                    <h4 class="form-section-title">
+                        <i class="fas fa-comment" aria-hidden="true"></i>
+                        Comentarios Adicionales
+                    </h4>
+                    <div class="form-group">
+                        <label>Notas (opcional)</label>
+                        <textarea id="comentarios" name="comentarios" class="form-control" rows="3" placeholder="Información adicional sobre este gasto..."></textarea>
+                    </div>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <button type="button" class="btn-secondary" onclick="cerrarModalGasto()">
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-times" aria-hidden="true"></i>
                     Cancelar
                 </button>
                 <button type="submit" class="btn-primary">
-                    <i class="fas fa-save"></i>
+                    <i class="fas fa-save" aria-hidden="true"></i>
                     Guardar Gasto
                 </button>
             </div>
@@ -776,6 +825,50 @@ textarea.form-control {
         opacity: 0;
     }
 }
+
+/* ==================== FORM SECTIONS ==================== */
+
+.form-section {
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.form-section:first-child {
+    padding-top: 0;
+}
+
+.form-section-title {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--gray-800);
+    margin-bottom: var(--space-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.form-section-title i {
+    color: var(--primary-color);
+    font-size: var(--font-size-lg);
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 {% endblock %}
 
@@ -793,6 +886,8 @@ let anioActual = hoy.getFullYear();
 // ==================== FUNCIONES API ====================
 
 async function cargarGastos() {
+    showLoading('Cargando gastos...');
+
     try {
         const response = await fetch(`/contabilidad/api/gastos?mes=${mesActual}&anio=${anioActual}`);
         const result = await response.json();
@@ -808,10 +903,14 @@ async function cargarGastos() {
     } catch (error) {
         console.error('Error:', error);
         mostrarMensaje('Error de conexión al cargar los gastos', 'error');
+    } finally {
+        hideLoading();
     }
 }
 
 async function guardarGasto(gastoData) {
+    showLoading('Guardando gasto...');
+
     try {
         console.log('Enviando datos:', gastoData);
 
@@ -842,10 +941,12 @@ async function guardarGasto(gastoData) {
             const errorMsg = result.error || 'Error desconocido al guardar';
             console.error('Error del servidor:', errorMsg);
             mostrarMensaje(errorMsg, 'error');
+            hideLoading();
         }
     } catch (error) {
         console.error('Error completo:', error);
         mostrarMensaje('Error de conexión: ' + error.message, 'error');
+        hideLoading();
     }
 }
 
@@ -853,6 +954,8 @@ async function eliminarGasto(id) {
     if (!confirm('¿Está seguro de eliminar este gasto?')) {
         return;
     }
+
+    showLoading('Eliminando...');
 
     try {
         const response = await fetch(`/contabilidad/api/gastos/${id}`, {
@@ -870,6 +973,8 @@ async function eliminarGasto(id) {
     } catch (error) {
         console.error('Error:', error);
         mostrarMensaje('Error al eliminar el gasto', 'error');
+    } finally {
+        hideLoading();
     }
 }
 
@@ -881,7 +986,7 @@ function abrirModalGasto(gasto = null) {
 
     if (gasto) {
         // Editar gasto existente
-        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-edit"></i> Editar Gasto';
+        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-edit" aria-hidden="true"></i> Editar Gasto';
         gastoEditando = gasto;
 
         // Llenar formulario
@@ -896,7 +1001,7 @@ function abrirModalGasto(gasto = null) {
         document.getElementById('comentarios').value = gasto.comentarios || '';
     } else {
         // Nuevo gasto
-        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-plus-circle"></i> Registrar Nuevo Gasto';
+        document.getElementById('modalTitulo').innerHTML = '<i class="fas fa-plus-circle" aria-hidden="true"></i> Registrar Nuevo Gasto';
         gastoEditando = null;
         form.reset();
 
@@ -907,9 +1012,15 @@ function abrirModalGasto(gasto = null) {
     }
 
     modal.classList.add('active');
+
+    // Setup focus trap
+    setupFocusTrap('modalGasto');
 }
 
 function cerrarModalGasto() {
+    // Remover focus trap
+    removeFocusTrap('modalGasto');
+
     const modal = document.getElementById('modalGasto');
     modal.classList.remove('active');
     gastoEditando = null;
@@ -930,15 +1041,79 @@ function toggleOtraCategoria() {
     }
 }
 
+function poblarFiltros() {
+    const sucursales = [...new Set(gastosData.map(g => g.sucursal))].sort();
+    const tipos = [...new Set(gastosData.map(g => g.tipo_gasto))].sort();
+    const categorias = [...new Set(gastosData.map(g => g.categoria))].sort();
+
+    const filtroSucursal = document.getElementById('filtroSucursal');
+    const filtroTipo = document.getElementById('filtroTipo');
+    const filtroCategoria = document.getElementById('filtroCategoria');
+
+    // Guardar valores seleccionados
+    const valSucursal = filtroSucursal.value;
+    const valTipo = filtroTipo.value;
+    const valCategoria = filtroCategoria.value;
+
+    filtroSucursal.innerHTML = '<option value="">Todas</option>' + sucursales.map(s => `<option value="${s}">${s}</option>`).join('');
+    filtroTipo.innerHTML = '<option value="">Todos</option>' + tipos.map(t => `<option value="${t}">${t}</option>`).join('');
+    filtroCategoria.innerHTML = '<option value="">Todas</option>' + categorias.map(c => `<option value="${c}">${c}</option>`).join('');
+
+    // Restaurar valores si aún existen
+    filtroSucursal.value = valSucursal;
+    filtroTipo.value = valTipo;
+    filtroCategoria.value = valCategoria;
+}
+
+function obtenerGastosFiltrados() {
+    const filtroSucursal = document.getElementById('filtroSucursal').value;
+    const filtroTipo = document.getElementById('filtroTipo').value;
+    const filtroCategoria = document.getElementById('filtroCategoria').value;
+    const ordenMonto = document.getElementById('ordenMonto').value;
+
+    let datos = [...gastosData];
+
+    // Aplicar filtros
+    if (filtroSucursal) {
+        datos = datos.filter(g => g.sucursal === filtroSucursal);
+    }
+    if (filtroTipo) {
+        datos = datos.filter(g => g.tipo_gasto === filtroTipo);
+    }
+    if (filtroCategoria) {
+        datos = datos.filter(g => g.categoria === filtroCategoria);
+    }
+
+    // Aplicar orden
+    if (ordenMonto === 'desc') {
+        datos.sort((a, b) => b.monto - a.monto);
+    } else if (ordenMonto === 'asc') {
+        datos.sort((a, b) => a.monto - b.monto);
+    }
+
+    return datos;
+}
+
 function renderizarTabla() {
     const tbody = document.querySelector('#tablaGastos tbody');
 
     if (gastosData.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="11" style="text-align: center; padding: 40px; color: var(--gray-500);">
-                    <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
-                    No hay gastos registrados para este mes
+                <td colspan="11">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox empty-state-icon" aria-hidden="true"></i>
+                        <h3 class="empty-state-title">No hay gastos registrados</h3>
+                        <p class="empty-state-message">
+                            Registra tu primer gasto para comenzar el seguimiento financiero de este mes
+                        </p>
+                        <div class="empty-state-action">
+                            <button class="btn btn-primary" onclick="abrirModalGasto()">
+                                <i class="fas fa-plus" aria-hidden="true"></i>
+                                Registrar Gasto
+                            </button>
+                        </div>
+                    </div>
                 </td>
             </tr>
         `;
@@ -946,38 +1121,78 @@ function renderizarTabla() {
         return;
     }
 
-    const totalGastos = gastosData.reduce((sum, g) => sum + g.monto, 0);
+    // Poblar opciones de filtros dinámicamente
+    poblarFiltros();
 
-    tbody.innerHTML = gastosData.map(gasto => {
+    // Obtener datos filtrados y ordenados
+    const datosFiltrados = obtenerGastosFiltrados();
+
+    if (datosFiltrados.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="11">
+                    <div class="empty-state">
+                        <i class="fas fa-filter empty-state-icon" aria-hidden="true"></i>
+                        <h3 class="empty-state-title">Sin resultados</h3>
+                        <p class="empty-state-message">
+                            No se encontraron gastos con los filtros seleccionados
+                        </p>
+                        <div class="empty-state-action">
+                            <button class="btn btn-secondary" onclick="limpiarFiltros()">
+                                <i class="fas fa-times" aria-hidden="true"></i>
+                                Limpiar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        `;
+        document.getElementById('totalTabla').textContent = '$0.00';
+        return;
+    }
+
+    const totalFiltrado = datosFiltrados.reduce((sum, g) => sum + g.monto, 0);
+
+    tbody.innerHTML = datosFiltrados.map(gasto => {
         const porcentaje = gasto.porcentaje || 0;
         const facturadoTexto = gasto.facturado ? 'Sí' : 'No';
         const facturadoClass = gasto.facturado ? 'si' : 'no';
 
         return `
             <tr>
-                <td>${new Date(gasto.fecha + 'T00:00:00').toLocaleDateString('es-MX')}</td>
-                <td>${gasto.sucursal}</td>
-                <td><span class="badge ${gasto.tipo_gasto.toLowerCase()}">${gasto.tipo_gasto}</span></td>
-                <td>${gasto.categoria}</td>
-                <td>${gasto.descripcion || '-'}</td>
-                <td>${gasto.forma_pago}</td>
-                <td>$${gasto.monto.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                <td>${porcentaje.toFixed(1)}%</td>
-                <td><span class="badge ${facturadoClass}">${facturadoTexto}</span></td>
-                <td>${gasto.comentarios || '-'}</td>
-                <td style="white-space: nowrap;">
+                <td data-label="Fecha">${new Date(gasto.fecha + 'T00:00:00').toLocaleDateString('es-MX')}</td>
+                <td data-label="Sucursal">${gasto.sucursal}</td>
+                <td data-label="Tipo"><span class="badge ${gasto.tipo_gasto.toLowerCase()}">${gasto.tipo_gasto}</span></td>
+                <td data-label="Categoría">${gasto.categoria}</td>
+                <td data-label="Descripción">${gasto.descripcion || '-'}</td>
+                <td data-label="Forma de Pago">${gasto.forma_pago}</td>
+                <td data-label="Monto">$${gasto.monto.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td data-label="%">${porcentaje.toFixed(1)}%</td>
+                <td data-label="¿Facturado?"><span class="badge ${facturadoClass}">${facturadoTexto}</span></td>
+                <td data-label="Comentarios">${gasto.comentarios || '-'}</td>
+                <td data-label="Acciones" style="white-space: nowrap;">
                     <button class="btn-action edit" onclick='editarGastoById(${gasto.id})' title="Editar">
-                        <i class="fas fa-edit"></i>
+                        <i class="fas fa-edit" aria-hidden="true"></i>
+                        <span class="sr-only">Editar gasto</span>
                     </button>
                     <button class="btn-action delete" onclick="eliminarGasto(${gasto.id})" title="Eliminar">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash" aria-hidden="true"></i>
+                        <span class="sr-only">Eliminar gasto</span>
                     </button>
                 </td>
             </tr>
         `;
     }).join('');
 
-    document.getElementById('totalTabla').textContent = `$${totalGastos.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('totalTabla').textContent = `$${totalFiltrado.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+}
+
+function limpiarFiltros() {
+    document.getElementById('filtroSucursal').value = '';
+    document.getElementById('filtroTipo').value = '';
+    document.getElementById('filtroCategoria').value = '';
+    document.getElementById('ordenMonto').value = '';
+    renderizarTabla();
 }
 
 function editarGastoById(id) {
@@ -1040,6 +1255,13 @@ document.getElementById('filtroMes').addEventListener('change', function() {
     cargarGastos();
 });
 
+// Filtros de sucursal, tipo, categoría y orden
+['filtroSucursal', 'filtroTipo', 'filtroCategoria', 'ordenMonto'].forEach(id => {
+    document.getElementById(id).addEventListener('change', function() {
+        renderizarTabla();
+    });
+});
+
 // Submit del formulario
 document.getElementById('formGasto').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -1067,6 +1289,77 @@ window.onclick = function(event) {
     const modal = document.getElementById('modalGasto');
     if (event.target === modal) {
         cerrarModalGasto();
+    }
+}
+
+// ==================== FOCUS TRAP PARA MODALES ====================
+
+function setupFocusTrap(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    // Obtener todos los elementos focusables
+    const focusableElements = modal.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    // Guardar elemento que abrió el modal
+    const activeElement = document.activeElement;
+    modal.dataset.triggerElement = activeElement && activeElement.id ? activeElement.id : '';
+
+    // Handler para teclado
+    function handleKeyDown(e) {
+        if (e.key === 'Escape') {
+            cerrarModalGasto();
+            return;
+        }
+
+        if (e.key === 'Tab') {
+            if (e.shiftKey) {
+                // Shift+Tab: si estamos en el primero, ir al último
+                if (document.activeElement === firstElement) {
+                    e.preventDefault();
+                    lastElement.focus();
+                }
+            } else {
+                // Tab: si estamos en el último, ir al primero
+                if (document.activeElement === lastElement) {
+                    e.preventDefault();
+                    firstElement.focus();
+                }
+            }
+        }
+    }
+
+    // Agregar listener
+    modal.addEventListener('keydown', handleKeyDown);
+
+    // Almacenar handler para poder removerlo después
+    modal._focusTrapHandler = handleKeyDown;
+
+    // Focus al primer elemento
+    setTimeout(() => firstElement.focus(), 100);
+}
+
+function removeFocusTrap(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal || !modal._focusTrapHandler) return;
+
+    // Remover listener
+    modal.removeEventListener('keydown', modal._focusTrapHandler);
+    delete modal._focusTrapHandler;
+
+    // Restaurar foco al elemento que abrió el modal
+    if (modal.dataset.triggerElement) {
+        const trigger = document.getElementById(modal.dataset.triggerElement);
+        if (trigger) {
+            trigger.focus();
+        }
     }
 }
 

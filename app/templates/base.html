@@ -20,31 +20,26 @@
 
     <style>
         /* ========================================
-           DISEÑO NEUMÓRFICO - COLORES NEUTROS
-           Regla 90/10: Neutros + Acentos sutiles
+           DISEÑO BRANDED LEAL CAFÉ
+           Paleta Café Branded + Componentes Limpios
         ======================================== */
 
+        /* Variables locales usando sistema de diseño café */
         :root {
-            /* Paleta Neutra Principal */
-            --bg-primary: #e8ecef;
-            --bg-secondary: #f0f4f7;
-            --bg-card: #e8ecef;
+            /* Fondos - Usando paleta café */
+            --bg-primary: var(--primary-50);
+            --bg-secondary: var(--primary-100);
+            --bg-card: var(--white);
 
-            /* Textos */
-            --text-primary: #2c3e50;
-            --text-secondary: #5a6c7d;
-            --text-muted: #8b9caa;
+            /* Textos - Paleta café y grises */
+            --text-primary-local: var(--text-primary);
+            --text-secondary-local: var(--text-secondary);
+            --text-muted-local: var(--text-muted);
 
-            /* Sombras Neumórficas */
-            --shadow-light: #ffffff;
-            --shadow-dark: rgba(163, 177, 198, 0.6);
-
-            /* Acentos vibrantes */
-            --accent-brown: #8b7355;
-            --accent-green: #4CAF50;
-            --accent-orange: #FF9800;
-            --accent-blue: #2196F3;
-            --accent-danger: #F44336;
+            /* Sombras suaves para cards */
+            --shadow-light: rgba(255, 255, 255, 0.8);
+            --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
         }
 
         * {
@@ -54,35 +49,38 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            font-family: var(--font-primary);
+            background: #F8F6F3;
             min-height: 100vh;
-            color: var(--text-primary);
+            color: var(--text-primary-local);
         }
 
         /* ========================================
-           HEADER - Estilo Card Elevada
+           HEADER - Premium Branded
         ======================================== */
         .main-header {
-            background: transparent;
-            padding: 20px 40px 0 40px;
+            background: #F8F6F3;
+            padding: 20px 40px 20px 40px;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky, 1020);
         }
 
         .header-container {
             max-width: 1400px;
             width: 100%;
-            padding: 16px 32px;
+            padding: 14px 32px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-            background: var(--white);
+            background: linear-gradient(135deg, #3A2C1D 0%, #5D4730 50%, #8B6F47 100%);
             border-radius: 16px;
-            /* Sombra elevada tipo card */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 8px 32px rgba(58, 44, 29, 0.35),
+                        0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .header-left {
@@ -91,67 +89,92 @@
             gap: 16px;
         }
 
-        .user-profile {
+        .brand-logo {
             display: flex;
             align-items: center;
             gap: 14px;
+            text-decoration: none;
+            color: white;
         }
 
-        .user-avatar {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: var(--accent-blue);
+        .brand-logo-icon {
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            color: var(--white);
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 300ms ease;
+        }
+
+        .brand-logo:hover .brand-logo-icon {
+            background: rgba(255, 255, 255, 0.25);
+            transform: rotate(-5deg) scale(1.05);
+        }
+
+        .brand-logo-icon svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+        }
+
+        .brand-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .brand-tagline {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Separador vertical */
+        .header-divider {
+            width: 1px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 14px;
-            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+            font-weight: 700;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .user-name {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.3px;
-        }
-
-        .cafe-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #D4A574 0%, #8B6F47 50%, #6F5936 100%);
-            border-radius: 50%;
-            color: var(--white);
-            font-size: 16px;
-            box-shadow: 0 3px 8px rgba(139, 111, 71, 0.25),
-                        inset 0 -2px 4px rgba(0, 0, 0, 0.1),
-                        inset 0 2px 4px rgba(255, 255, 255, 0.2);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .cafe-icon::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 30%;
-            background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-        }
-
-        .cafe-icon:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 4px 12px rgba(139, 111, 71, 0.35),
-                        inset 0 -2px 4px rgba(0, 0, 0, 0.1),
-                        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: -0.2px;
         }
 
         .header-right {
@@ -160,25 +183,29 @@
             gap: 12px;
         }
 
+        /* Boton logout rediseñado */
         .btn-logout {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--danger-color);
-            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
             padding: 10px 20px;
             border-radius: 10px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 13px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(244, 67, 54, 0.3);
+            transition: all 300ms ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
         }
 
         .btn-logout:hover {
-            background: var(--danger-dark);
+            background: rgba(244, 67, 54, 0.9);
+            color: white;
+            border-color: transparent;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
         }
 
         /* ========================================
@@ -189,67 +216,73 @@
             width: 100%;
             margin: 0 auto;
             padding: 40px;
+            background: linear-gradient(180deg, #F8F6F3 0%, #F0EDE8 100%);
+            min-height: calc(100vh - 64px);
+            position: relative;
+            z-index: 1;
         }
 
         /* ========================================
-           ALERTAS - Estilo Suave
+           ALERTAS - Estilo Limpio
         ======================================== */
         .alert {
             padding: 16px 20px;
-            border-radius: 14px;
-            margin-bottom: 24px;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-2xl);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: var(--space-md);
             background: var(--bg-card);
-            box-shadow:
-                4px 4px 8px var(--shadow-dark),
-                -4px -4px 8px var(--shadow-light);
+            box-shadow: var(--shadow-card);
         }
 
         .alert-success {
-            border-left: 4px solid var(--accent-green);
-            color: var(--accent-green);
+            background: var(--success-50);
+            border-left: 4px solid var(--success-color);
+            color: var(--success-800);
         }
 
         .alert-danger {
-            border-left: 4px solid var(--accent-danger);
-            color: var(--accent-danger);
+            background: var(--danger-50);
+            border-left: 4px solid var(--danger-color);
+            color: var(--danger-800);
         }
 
         .alert-warning {
-            border-left: 4px solid var(--accent-orange);
-            color: var(--accent-orange);
+            background: var(--warning-50);
+            border-left: 4px solid var(--warning-color);
+            color: var(--warning-800);
         }
 
         .alert-info {
-            border-left: 4px solid var(--accent-blue);
-            color: var(--accent-blue);
+            background: var(--info-50);
+            border-left: 4px solid var(--info-color);
+            color: var(--info-800);
         }
 
         /* ========================================
-           BOTÓN VOLVER - Estilo Card
+           BOTÓN VOLVER - Estilo Limpio
         ======================================== */
         .btn-back {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--gray-100);
-            color: var(--text-primary);
-            border-radius: 8px;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-lg);
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
+            border-radius: var(--radius-md);
             text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            margin-right: 20px;
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            transition: all 300ms ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-right: var(--space-xl);
         }
 
         .btn-back:hover {
-            background: var(--gray-200);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            color: white;
         }
 
         .btn-back i {
@@ -257,84 +290,87 @@
         }
 
         /* ========================================
-           BOTONES GENERALES - Neumórficos
+           BOTONES GENERALES - Estilo Limpio
         ======================================== */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: var(--bg-primary);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-2xl);
+            background: var(--bg-card);
+            color: var(--text-secondary-local);
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
             text-decoration: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow:
-                4px 4px 8px var(--shadow-dark),
-                -4px -4px 8px var(--shadow-light);
+            transition: all var(--transition-base);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn:hover {
-            box-shadow:
-                inset 2px 2px 5px var(--shadow-dark),
-                inset -2px -2px 5px var(--shadow-light);
+            background: var(--gray-50);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         .btn-primary {
-            color: var(--accent-blue);
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
         }
 
         .btn-success {
-            color: var(--accent-green);
+            background: var(--success-color);
+            color: var(--white);
+            border-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+            border-color: var(--success-dark);
         }
 
         .btn-danger {
-            color: var(--accent-danger);
+            background: var(--danger-color);
+            color: var(--white);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+            border-color: var(--danger-dark);
         }
 
         /* ========================================
            RESPONSIVE
         ======================================== */
         @media (max-width: 768px) {
-            .main-header {
-                padding: 16px 16px 0 16px;
-            }
-
             .header-container {
                 padding: 12px 20px;
-                flex-wrap: wrap;
-                gap: 12px;
-                border-radius: 12px;
+            }
+
+            .brand-logo-text .brand-tagline {
+                display: none;
             }
 
             .user-name {
-                font-size: 14px;
+                display: none;
             }
 
-            .user-avatar {
-                width: 36px;
-                height: 36px;
-                font-size: 12px;
-            }
-
-            .cafe-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
+            .header-divider {
+                display: none;
             }
 
             .main-container {
                 padding: 24px 16px;
-            }
-
-            .header-right {
-                width: 100%;
-                justify-content: flex-end;
             }
 
             .btn-back {
@@ -348,6 +384,106 @@
                 font-size: 12px;
             }
         }
+
+        @media (max-width: 480px) {
+            .brand-name {
+                font-size: 16px;
+            }
+            .brand-logo-icon {
+                width: 36px;
+                height: 36px;
+            }
+        }
+        /* ========================================
+           LOADER - FONDO BORROSO + CARD CENTRO
+        ======================================== */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(248, 246, 243, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 250ms ease;
+        }
+
+        .page-loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .page-loader-content {
+            background: white;
+            padding: 32px 44px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(58, 44, 29, 0.2),
+                        0 4px 12px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            animation: loaderCardIn 300ms ease;
+        }
+
+        @keyframes loaderCardIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .page-loader-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #8B7355 0%, #D4A574 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: loaderPulse 1.2s ease-in-out infinite;
+            box-shadow: 0 6px 20px rgba(139, 115, 85, 0.35);
+        }
+
+        .page-loader-icon svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        @keyframes loaderPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .page-loader-text {
+            color: var(--gray-700);
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .page-loader-bar {
+            display: none;
+        }
+
+        .page-loader-bar-fill {
+            height: 100%;
+            width: 40%;
+            background: linear-gradient(90deg, #D4A574, #8B7355);
+            border-radius: 4px;
+            animation: loaderBar 1.2s ease-in-out infinite;
+        }
+
+        @keyframes loaderBar {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(350%); }
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -360,7 +496,28 @@
                 <!-- Botón de regreso (solo visible en módulos) -->
                 {% block btn_back %}{% endblock %}
 
+                <a href="{{ url_for('dashboard') }}" class="brand-logo">
+                    <div class="brand-logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 8h1a3 3 0 0 1 0 6h-1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <path d="M6 1v3M10 1v3M14 1v3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="brand-logo-text">
+                        <span class="brand-name">Leal Cafe</span>
+                        <span class="brand-tagline">Sistema de Gestion</span>
+                    </div>
+                </a>
+                <div class="header-divider"></div>
                 <div class="user-profile">
+                    <div class="user-avatar">
+                        {% if session.user %}
+                            {{ session.user.nombre[0] }}{{ session.user.apellido[0] }}
+                        {% else %}
+                            U
+                        {% endif %}
+                    </div>
                     <span class="user-name">
                         {% if session.user %}
                             {{ session.user.nombre }} {{ session.user.apellido }}
@@ -368,16 +525,13 @@
                             Usuario
                         {% endif %}
                     </span>
-                    <span class="cafe-icon">
-                        <i class="fas fa-coffee"></i>
-                    </span>
                 </div>
             </div>
 
             <div class="header-right">
                 <a href="{{ url_for('auth.logout') }}" class="btn-logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Cerrar Sesión
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Salir</span>
                 </a>
             </div>
         </div>
@@ -390,7 +544,7 @@
             {% if messages %}
                 {% for category, message in messages %}
                 <div class="alert alert-{{ category }}">
-                    <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}"></i>
+                    <i class="fas fa-{% if category == 'success' %}check-circle{% elif category == 'danger' %}exclamation-circle{% elif category == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}" aria-hidden="true"></i>
                     <span>{{ message }}</span>
                 </div>
                 {% endfor %}
@@ -401,8 +555,45 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Pantalla de Carga Global -->
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-content">
+            <div class="page-loader-icon">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18 8h1a3 3 0 0 1 0 6h-1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <path d="M6 1v3M10 1v3M14 1v3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <p class="page-loader-text">Cargando...</p>
+            <div class="page-loader-bar">
+                <div class="page-loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+    <script>
+    // ==================== PANTALLA DE CARGA ====================
+    (function() {
+        const loader = document.getElementById('page-loader');
+
+        // Mostrar loader al hacer clic en links de módulos
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a.module-btn, a.submodule-btn, a.submodule-btn-orange, a.submodule-btn-green, a[href*="modulo"], a[href*="ventas"], a[href*="contabilidad"], a[href*="reportes"], a[href*="operativo"], a[href*="cargar"]');
+
+            if (link && !link.target && link.href && !link.href.includes('#') && !link.href.includes('javascript:')) {
+                loader.classList.add('active');
+            }
+        });
+
+        // Ocultar loader cuando la página termina de cargar
+        window.addEventListener('pageshow', function() {
+            loader.classList.remove('active');
+        });
+    })();
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

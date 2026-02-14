@@ -4,7 +4,7 @@
 
 {% block btn_back %}
 <a href="{{ url_for('dashboard') }}" class="btn-back">
-    <i class="fas fa-arrow-left"></i>
+    <i class="fas fa-arrow-left" aria-hidden="true"></i>
     Volver
 </a>
 {% endblock %}
@@ -13,7 +13,7 @@
 <!-- Module Header -->
 <div class="module-header">
     <div class="module-icon">
-        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-shopping-cart" aria-hidden="true"></i>
     </div>
     <div class="module-info">
         <h1>Gestión de Ventas</h1>
@@ -27,11 +27,11 @@
         <h3 style="margin: 0;">Listado de Ventas</h3>
         <div style="display: flex; gap: 12px;">
             <a href="{{ url_for('ventas.cargar') }}" class="btn btn-primary">
-                <i class="fas fa-file-upload"></i>
+                <i class="fas fa-file-upload" aria-hidden="true"></i>
                 Cargar Ventas
             </a>
             <button onclick="exportarVentas()" class="btn btn-success">
-                <i class="fas fa-file-excel"></i>
+                <i class="fas fa-file-excel" aria-hidden="true"></i>
                 Exportar a Excel
             </button>
         </div>
@@ -53,7 +53,7 @@
         </div>
         <div class="form-group" style="display: flex; align-items: flex-end;">
             <button onclick="limpiarFiltros()" class="btn btn-outline btn-block">
-                <i class="fas fa-redo"></i>
+                <i class="fas fa-redo" aria-hidden="true"></i>
                 Limpiar Filtros
             </button>
         </div>
@@ -63,17 +63,17 @@
 <!-- Tabla de Ventas -->
 <div class="section-box">
     <div class="table-wrapper">
-        <table class="data-table table-striped" id="tablaVentas">
+        <table class="data-table table-striped table-card" id="tablaVentas">
             <thead>
                 <tr>
                     <th onclick="sortTable('tablaVentas', 0)" style="cursor: pointer;">
-                        ID <i class="fas fa-sort"></i>
+                        ID <i class="fas fa-sort" aria-hidden="true"></i>
                     </th>
                     <th onclick="sortTable('tablaVentas', 1)" style="cursor: pointer;">
-                        Fecha <i class="fas fa-sort"></i>
+                        Fecha <i class="fas fa-sort" aria-hidden="true"></i>
                     </th>
                     <th onclick="sortTable('tablaVentas', 2)" style="cursor: pointer;">
-                        Producto <i class="fas fa-sort"></i>
+                        Producto <i class="fas fa-sort" aria-hidden="true"></i>
                     </th>
                     <th style="text-align: right;">Cantidad</th>
                     <th style="text-align: right;">Precio Unit.</th>
@@ -84,20 +84,30 @@
                 {% if ventas %}
                     {% for venta in ventas %}
                     <tr>
-                        <td>{{ venta.id }}</td>
-                        <td>{{ venta.fecha.strftime('%d/%m/%Y') if venta.fecha else '-' }}</td>
-                        <td>{{ venta.producto }}</td>
-                        <td style="text-align: right;">{{ "%.2f"|format(venta.cantidad) }}</td>
-                        <td style="text-align: right;">${{ "%.2f"|format(venta.precio_unitario) }}</td>
-                        <td style="text-align: right;"><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                        <td data-label="ID">{{ venta.id }}</td>
+                        <td data-label="Fecha">{{ venta.fecha.strftime('%d/%m/%Y') if venta.fecha else '-' }}</td>
+                        <td data-label="Producto">{{ venta.producto }}</td>
+                        <td data-label="Cantidad" style="text-align: right;">{{ "%.2f"|format(venta.cantidad) }}</td>
+                        <td data-label="Precio Unit." style="text-align: right;">${{ "%.2f"|format(venta.precio_unitario) }}</td>
+                        <td data-label="Total" style="text-align: right;"><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
                     </tr>
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-500);">
-                            <i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; display: block; opacity: 0.5;"></i>
-                            No hay ventas registradas.
-                            <a href="{{ url_for('ventas.cargar') }}">Cargar ventas ahora</a>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox empty-state-icon" aria-hidden="true"></i>
+                                <h3 class="empty-state-title">No hay ventas registradas</h3>
+                                <p class="empty-state-message">
+                                    Comienza cargando tu primer archivo de ventas para visualizar datos
+                                </p>
+                                <div class="empty-state-action">
+                                    <a href="{{ url_for('ventas.cargar') }}" class="btn btn-primary">
+                                        <i class="fas fa-file-upload" aria-hidden="true"></i>
+                                        Cargar Ventas
+                                    </a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% endif %}
@@ -194,12 +204,12 @@
 
             return `
                 <tr>
-                    <td>${venta.id}</td>
-                    <td>${fechaStr}</td>
-                    <td>${venta.producto}</td>
-                    <td style="text-align: right;">${formatNumber(venta.cantidad)}</td>
-                    <td style="text-align: right;">${formatCurrency(venta.precio_unitario)}</td>
-                    <td style="text-align: right;"><strong>${formatCurrency(venta.total)}</strong></td>
+                    <td data-label="ID">${venta.id}</td>
+                    <td data-label="Fecha">${fechaStr}</td>
+                    <td data-label="Producto">${venta.producto}</td>
+                    <td data-label="Cantidad" style="text-align: right;">${formatNumber(venta.cantidad)}</td>
+                    <td data-label="Precio Unit." style="text-align: right;">${formatCurrency(venta.precio_unitario)}</td>
+                    <td data-label="Total" style="text-align: right;"><strong>${formatCurrency(venta.total)}</strong></td>
                 </tr>
             `;
         }).join('');

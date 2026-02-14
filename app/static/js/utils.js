@@ -378,29 +378,52 @@ async function exportTableToExcel(tableId, fileName = 'datos') {
 // LOADING SPINNER
 // ============================
 
-/**
- * Mostrar overlay de carga
- */
+// ==================== LOADING OVERLAY MEJORADO ====================
+
 function showLoading(message = 'Cargando...') {
+    // Remover overlay anterior si existe
+    hideLoading();
+
     const overlay = document.createElement('div');
     overlay.id = 'loading-overlay';
     overlay.className = 'loading-overlay';
     overlay.innerHTML = `
-        <div style="text-align: center; color: white;">
-            <div class="spinner"></div>
-            <p style="margin-top: 16px; font-size: 16px;">${message}</p>
+        <div class="loading-content">
+            <div class="spinner-wrapper">
+                <div class="spinner"></div>
+            </div>
+            <p class="loading-message">${message}</p>
+            <div class="loading-progress">
+                <div class="loading-bar"></div>
+            </div>
         </div>
     `;
+
     document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+
+    // Fade in suave
+    requestAnimationFrame(() => {
+        overlay.style.opacity = '1';
+    });
 }
 
-/**
- * Ocultar overlay de carga
- */
 function hideLoading() {
     const overlay = document.getElementById('loading-overlay');
     if (overlay) {
-        overlay.remove();
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.remove();
+            document.body.style.overflow = '';
+        }, 300);
+    }
+}
+
+// Función adicional para actualizar mensaje durante carga
+function updateLoadingMessage(message) {
+    const messageEl = document.querySelector('.loading-message');
+    if (messageEl) {
+        messageEl.textContent = message;
     }
 }
 

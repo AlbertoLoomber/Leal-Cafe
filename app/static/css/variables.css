@@ -4,16 +4,43 @@
  */
 
 :root {
-    /* Paleta de colores principal - Café Vibrante */
-    --primary-color: #8B6F47;        /* Café medio suave */
-    --primary-dark: #6F5936;         /* Café medio oscuro (hover) */
-    --primary-light: #A1887F;        /* Café claro */
+    /* Paleta de colores principal - Café Branded (Escala Completa) */
+    --primary-50: #FFF8F0;           /* Café muy claro - fondos sutiles */
+    --primary-100: #F5EEDC;          /* Café claro - fondos suaves */
+    --primary-200: #E8D9BC;          /* Crema café */
+    --primary-300: #D4A574;          /* Dorado café */
+    --primary-400: #B8946E;          /* Café medio claro */
+    --primary-500: #8B6F47;          /* Café principal - color base */
+    --primary-600: #6F5936;          /* Café medio oscuro - hover */
+    --primary-700: #5D4730;          /* Café oscuro */
+    --primary-800: #4E3A26;          /* Café muy oscuro */
+    --primary-900: #3A2C1D;          /* Café casi negro */
 
-    --secondary-color: #5D4037;      /* Marrón medio (sidebar) */
-    --secondary-dark: #4E342E;       /* Marrón oscuro */
+    /* Aliases para compatibilidad con código existente */
+    --primary-color: var(--primary-500);
+    --primary-dark: var(--primary-600);
+    --primary-light: var(--primary-300);
 
-    --accent-color: #D4A574;         /* Crema dorada */
-    --accent-light: #E8C9A0;         /* Crema suave */
+    /* Secondary - Marrón (Escala Completa) */
+    --secondary-50: #EFEBE9;
+    --secondary-100: #D7CCC8;
+    --secondary-200: #BCAAA4;
+    --secondary-300: #A1887F;
+    --secondary-400: #8D6E63;
+    --secondary-500: #5D4037;        /* Marrón principal */
+    --secondary-600: #4E342E;        /* Marrón oscuro */
+    --secondary-700: #3E2723;
+    --secondary-800: #2C1810;
+    --secondary-900: #1A0F08;
+
+    /* Aliases para compatibilidad */
+    --secondary-color: var(--secondary-500);
+    --secondary-dark: var(--secondary-600);
+
+    /* Accent - Crema Dorada */
+    --accent-color: #D4A574;
+    --accent-light: #E8C9A0;
+    --accent-dark: #B8946E;
 
     /* Colores vibrantes para módulos */
     --color-ventas: #8B7355;         /* Café/Marrón para ventas */
@@ -21,66 +48,136 @@
     --color-operativo: #E39774;      /* Naranja suave para operativo */
     --color-reportes: #7895CB;       /* Azul suave para reportes */
 
-    /* Colores de estado - Más vibrantes */
-    --success-color: #4CAF50;        /* Verde más vibrante */
-    --success-dark: #388E3C;         /* Verde oscuro */
-    --success-light: #81C784;        /* Verde claro */
+    /* Colores semánticos - Success (Escala Completa) */
+    --success-50: #E8F5E9;
+    --success-100: #C8E6C9;
+    --success-200: #A5D6A7;
+    --success-300: #81C784;
+    --success-400: #66BB6A;
+    --success-500: #4CAF50;          /* Verde principal */
+    --success-600: #43A047;
+    --success-700: #388E3C;          /* Verde oscuro */
+    --success-800: #2E7D32;
+    --success-900: #1B5E20;
 
-    --warning-color: #FF9800;        /* Naranja vibrante */
-    --warning-dark: #F57C00;         /* Naranja oscuro */
-    --warning-light: #FFB74D;        /* Naranja claro */
+    /* Aliases para compatibilidad */
+    --success-color: var(--success-500);
+    --success-dark: var(--success-700);
+    --success-light: var(--success-300);
 
-    --danger-color: #F44336;         /* Rojo vibrante */
-    --danger-dark: #D32F2F;          /* Rojo oscuro */
-    --danger-light: #EF5350;         /* Rojo claro */
+    /* Colores semánticos - Warning (Escala Completa) */
+    --warning-50: #FFF3E0;
+    --warning-100: #FFE0B2;
+    --warning-200: #FFCC80;
+    --warning-300: #FFB74D;
+    --warning-400: #FFA726;
+    --warning-500: #FF9800;          /* Naranja principal */
+    --warning-600: #FB8C00;
+    --warning-700: #F57C00;          /* Naranja oscuro */
+    --warning-800: #EF6C00;
+    --warning-900: #E65100;
 
-    --info-color: #2196F3;           /* Azul vibrante */
-    --info-dark: #1976D2;            /* Azul oscuro */
-    --info-light: #64B5F6;           /* Azul claro */
+    /* Aliases para compatibilidad */
+    --warning-color: var(--warning-500);
+    --warning-dark: var(--warning-700);
+    --warning-light: var(--warning-300);
 
-    /* Escala de grises y fondos */
+    /* Colores semánticos - Danger (Escala Completa) */
+    --danger-50: #FFEBEE;
+    --danger-100: #FFCDD2;
+    --danger-200: #EF9A9A;
+    --danger-300: #E57373;
+    --danger-400: #EF5350;
+    --danger-500: #F44336;           /* Rojo principal */
+    --danger-600: #E53935;
+    --danger-700: #D32F2F;           /* Rojo oscuro */
+    --danger-800: #C62828;
+    --danger-900: #B71C1C;
+
+    /* Aliases para compatibilidad */
+    --danger-color: var(--danger-500);
+    --danger-dark: var(--danger-700);
+    --danger-light: var(--danger-300);
+
+    /* Colores semánticos - Info (Escala Completa) */
+    --info-50: #E3F2FD;
+    --info-100: #BBDEFB;
+    --info-200: #90CAF9;
+    --info-300: #64B5F6;
+    --info-400: #42A5F5;
+    --info-500: #2196F3;             /* Azul principal */
+    --info-600: #1E88E5;
+    --info-700: #1976D2;             /* Azul oscuro */
+    --info-800: #1565C0;
+    --info-900: #0D47A1;
+
+    /* Aliases para compatibilidad */
+    --info-color: var(--info-500);
+    --info-dark: var(--info-700);
+    --info-light: var(--info-300);
+
+    /* Escala de grises completa - WCAG AA compliant */
     --white: #FFFFFF;
     --black: #000000;
 
-    --gray-50: #FFFBF0;              /* Crema marfil */
-    --gray-100: #FFF8E1;             /* Crema muy claro */
-    --gray-200: #F5F5DC;             /* Beige claro */
-    --gray-300: #E0E0E0;             /* Gris claro */
-    --gray-400: #BDBDBD;             /* Gris medio */
-    --gray-500: #9E9E9E;             /* Gris */
-    --gray-600: #757575;             /* Gris oscuro */
-    --gray-700: #616161;             /* Gris muy oscuro */
-    --gray-800: #424242;             /* Casi negro */
-    --gray-900: #212121;             /* Negro suave */
+    --gray-50: #FAFAFA;
+    --gray-100: #F5F5F5;
+    --gray-200: #EEEEEE;
+    --gray-300: #E0E0E0;
+    --gray-400: #BDBDBD;
+    --gray-500: #757575;             /* Actualizado para contraste 4.6:1 */
+    --gray-600: #616161;             /* Actualizado para contraste 7:1 */
+    --gray-700: #424242;
+    --gray-800: #303030;
+    --gray-900: #212121;
 
-    --bg-light: #FFF8E1;             /* Fondo claro */
-    --bg-gray: #F5F5DC;              /* Fondo gris */
+    /* Fondos - Usando paleta café */
+    --bg-light: var(--primary-50);   /* Fondo claro café */
+    --bg-gray: var(--gray-100);      /* Fondo gris neutro */
     --bg-dark: var(--secondary-color); /* Fondo oscuro */
+    --bg-card: var(--white);         /* Fondo de cards */
 
-    /* Tipografía */
+    /* Textos usando paleta café y grises mejorados */
+    --text-primary: var(--secondary-700);    /* Texto principal */
+    --text-secondary: var(--gray-700);       /* Texto secundario */
+    --text-muted: #5a6c7d;                   /* Texto muted - contraste mejorado */
+
+    /* ==================== TIPOGRAFÍA FLUIDA ==================== */
     --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     --font-secondary: 'Inter', sans-serif;
+    --font-mono: 'Fira Code', 'Courier New', monospace;
 
-    --font-size-xs: 12px;
-    --font-size-sm: 13px;
-    --font-size-base: 14px;
-    --font-size-md: 16px;
-    --font-size-lg: 18px;
-    --font-size-xl: 20px;
-    --font-size-2xl: 24px;
-    --font-size-3xl: 32px;
-    --font-size-4xl: 40px;
+    /* Tamaños de fuente - Escala fluida con clamp() */
+    --font-size-xs: clamp(11px, 0.75rem, 12px);       /* 11-12px */
+    --font-size-sm: clamp(13px, 0.875rem, 14px);      /* 13-14px */
+    --font-size-base: clamp(14px, 1rem, 16px);        /* 14-16px */
+    --font-size-md: clamp(16px, 1.125rem, 18px);      /* 16-18px */
+    --font-size-lg: clamp(18px, 1.25rem, 20px);       /* 18-20px */
+    --font-size-xl: clamp(20px, 1.5rem, 24px);        /* 20-24px */
+    --font-size-2xl: clamp(24px, 1.75rem, 28px);      /* 24-28px */
+    --font-size-3xl: clamp(28px, 2rem, 32px);         /* 28-32px */
+    --font-size-4xl: clamp(32px, 2.5rem, 40px);       /* 32-40px */
 
+    /* Pesos */
     --font-weight-light: 300;
     --font-weight-regular: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
 
-    --line-height-tight: 1.2;
-    --line-height-normal: 1.5;
-    --line-height-relaxed: 1.6;
-    --line-height-loose: 1.8;
+    /* Line heights */
+    --line-height-tight: 1.2;      /* Headers */
+    --line-height-snug: 1.4;       /* Subheaders */
+    --line-height-normal: 1.5;     /* Texto general */
+    --line-height-relaxed: 1.6;    /* Párrafos largos */
+    --line-height-loose: 1.8;      /* Contenido editorial */
+
+    /* Letter spacing */
+    --letter-spacing-tight: -0.025em;   /* Headers grandes */
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;     /* All caps */
+    --letter-spacing-wider: 0.05em;     /* Etiquetas pequeñas */
 
     /* Espaciado */
     --space-xs: 4px;
@@ -188,6 +285,30 @@ p {
     margin-bottom: var(--space-lg);
 }
 
+/* ==================== SCREEN READER ONLY ==================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.sr-only-focusable:active,
+.sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
 a {
     color: var(--primary-color);
     text-decoration: none;
@@ -196,6 +317,17 @@ a {
 
 a:hover {
     color: var(--primary-dark);
+}
+
+/* Estados de foco accesibles */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
 }
 
 /* Scrollbar personalizada */

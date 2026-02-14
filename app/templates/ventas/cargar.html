@@ -21,6 +21,31 @@
     </div>
 </div>
 
+<!-- Stepper de Progreso -->
+<div class="stepper-container">
+    <div class="stepper">
+        <div class="step active" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-label">Configuración</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-label">Subir Archivo</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-label">Vista Previa</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-label">Confirmar</div>
+        </div>
+    </div>
+</div>
+
 <!-- Formulario de Carga -->
 <div class="section-box">
     <div class="section-title">
@@ -244,6 +269,132 @@
     padding-top: 24px;
 }
 
+/* ==================== STEPPER DE PROGRESO ==================== */
+.stepper-container {
+    background: var(--white);
+    padding: var(--space-3xl);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-3xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.step-number {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-sm);
+    transition: all var(--transition-base);
+    border: 3px solid var(--gray-200);
+}
+
+.step.active .step-number {
+    background: var(--primary-500);
+    color: var(--white);
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 4px rgba(139, 111, 71, 0.2);
+}
+
+.step.completed .step-number {
+    background: var(--success-500);
+    color: var(--white);
+    border-color: var(--success-500);
+    font-size: 0; /* Ocultar número */
+}
+
+.step.completed .step-number::before {
+    content: '✓';
+    font-size: var(--font-size-xl);
+}
+
+.step-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+    text-align: center;
+    font-weight: var(--font-weight-medium);
+    white-space: nowrap;
+}
+
+.step.active .step-label {
+    color: var(--primary-700);
+    font-weight: var(--font-weight-semibold);
+}
+
+.step.completed .step-label {
+    color: var(--success-700);
+    font-weight: var(--font-weight-medium);
+}
+
+.step-line {
+    flex: 1;
+    height: 3px;
+    background: var(--gray-200);
+    margin: 0 var(--space-md);
+    margin-bottom: var(--space-4xl);
+    transition: background var(--transition-base);
+}
+
+.step.completed + .step-line {
+    background: var(--success-500);
+}
+
+.step.active + .step-line {
+    background: linear-gradient(to right, var(--primary-500) 0%, var(--gray-200) 100%);
+}
+
+/* Responsive Stepper */
+@media (max-width: 640px) {
+    .stepper-container {
+        padding: var(--space-lg);
+    }
+
+    .step-label {
+        font-size: 10px;
+    }
+
+    .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: var(--font-size-base);
+    }
+
+    .step-line {
+        margin: 0 var(--space-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .step-label {
+        display: none;
+    }
+
+    .stepper {
+        max-width: 100%;
+    }
+}
+
 /* Modal personalizado para mensajes */
 .custom-modal-overlay {
     position: fixed;
@@ -414,6 +565,26 @@
 <script>
 let datosExtraidos = null;
 
+// ==================== STEPPER CONTROL ====================
+
+let pasoActual = 1;
+
+function actualizarPasoStepper(paso) {
+    pasoActual = paso;
+
+    document.querySelectorAll('.step').forEach((stepEl, index) => {
+        const numeroStep = index + 1;
+
+        stepEl.classList.remove('active', 'completed');
+
+        if (numeroStep < paso) {
+            stepEl.classList.add('completed');
+        } else if (numeroStep === paso) {
+            stepEl.classList.add('active');
+        }
+    });
+}
+
 // ============================================================================
 // MANEJO DE MODO DE CARGA Y DÍAS DINÁMICOS
 // ============================================================================
@@ -559,8 +730,12 @@ document.getElementById('archivo').addEventListener('change', function(e) {
             <i class="fas fa-file-excel" style="color: var(--success-color);"></i>
             ${archivo.name} (${(archivo.size / 1024 / 1024).toFixed(2)} MB)
         `;
+        // Avanzar al Paso 2: Subir Archivo
+        actualizarPasoStepper(2);
     } else {
         nombreDiv.innerHTML = '';
+        // Volver al Paso 1: Configuración
+        actualizarPasoStepper(1);
     }
 });
 
@@ -641,6 +816,8 @@ Por favor selecciona un archivo más pequeño.`);
     btnProcesar.disabled = true;
     btnProcesar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando archivo...';
 
+    showLoading('Procesando archivo...');
+
     try {
         const formData = new FormData();
         formData.append('file', archivo);
@@ -652,6 +829,8 @@ Por favor selecciona un archivo más pequeño.`);
         if (modoCarga === 'diario') {
             formData.append('dia', dia);
         }
+
+        updateLoadingMessage('Validando datos...');
 
         const response = await fetch('/ventas/upload-preview', {
             method: 'POST',
@@ -679,12 +858,16 @@ Verifica que:
 • La pestaña "Resumen de Ventas" exista
 • Los datos estén en el formato esperado`);
     } finally {
+        hideLoading();
         btnProcesar.disabled = false;
         btnProcesar.innerHTML = btnTextoOriginal;
     }
 });
 
 function mostrarVistaPrevia(data) {
+    // Avanzar al Paso 3: Vista Previa
+    actualizarPasoStepper(3);
+
     // Mostrar sección de vista previa
     document.getElementById('vistaPrevia').style.display = 'block';
 
@@ -1051,6 +1234,8 @@ function resetForm() {
     document.getElementById('nombreArchivo').innerHTML = '';
     document.getElementById('vistaPrevia').style.display = 'none';
     datosExtraidos = null;
+    // Volver al Paso 1: Configuración
+    actualizarPasoStepper(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1062,6 +1247,9 @@ async function confirmarGuardado() {
 3. Procesarlo con "Analizar Archivo"`);
         return;
     }
+
+    // Avanzar al Paso 4: Confirmar
+    actualizarPasoStepper(4);
 
     const metadata = datosExtraidos.metadata;
     const resumen = datosExtraidos.resumen;
